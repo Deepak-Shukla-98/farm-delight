@@ -1,0 +1,62 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  email         String      @unique
+  first_name    String
+  last_name     String
+  password      String
+  profile       Profile?
+  posts         Post[]
+  comments      Comment[]
+  followedBy    User[]      @relation("UserFollows", fields: [followedByIDs], references: [id])
+  followedByIDs String[]    @db.ObjectId
+  following     User[]      @relation("UserFollows", fields: [followingIDs], references: [id])
+  followingIDs  String[]    @db.ObjectId
+}
+
+model Profile {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId  
+  username      String      @unique
+  first_name    String
+  last_name     String
+  dob           String?
+  gender        String?
+  bio           String?
+  address       Address?
+  profileImg    Bytes?
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String      @unique @db.ObjectId
+}
+model Post {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  body          String
+  author_name   String
+  author        User        @relation(fields: [authorId], references: [id])
+  authorId      String      @db.ObjectId
+  comments      Comment[]
+}
+model Comment {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  comment       String
+  name          String
+  author        User        @relation(fields: [authorId], references: [id])
+  authorId      String
+  post          Post        @relation(fields: [postId], references: [id])
+  postId        String      @db.ObjectId
+}
+// Address is an embedded document
+type Address {
+  street    String
+  city      String
+  state     String
+  zip       String
+}
