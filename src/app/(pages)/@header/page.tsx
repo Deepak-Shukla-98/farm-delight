@@ -1,3 +1,4 @@
+import { useSharedContext } from "@/components/context/sharedContext";
 import Link from "next/link";
 import React, { useState } from "react";
 import { IoCartSharp } from "react-icons/io5";
@@ -5,7 +6,9 @@ import { TiUser } from "react-icons/ti";
 
 const Header = () => {
   const [isToggleOpen, setIsToggleOpen] = useState(false);
-
+  const {
+    state: { products_in_cart },
+  } = useSharedContext();
   return (
     <nav
       className="top-0 w-full py-3 bg-light opacity-85"
@@ -48,33 +51,37 @@ const Header = () => {
               </a>
             </li>
             <li className="nav-item px-2">
-              <a className="nav-link fw-medium" href="/products">
+              <Link className="nav-link fw-medium" href="/products">
                 Shop
-              </a>
+              </Link>
             </li>
             <li className="nav-item px-2">
-              <a className="nav-link fw-medium" href="/about">
+              <Link className="nav-link fw-medium" href="/about">
                 About
-              </a>
+              </Link>
             </li>
             <li className="nav-item px-2">
-              <a className="nav-link fw-medium" href="/contact">
+              <Link className="nav-link fw-medium" href="/contact">
                 Contact{" "}
-              </a>
+              </Link>
             </li>
             <li className="nav-item px-1">
-              <a className="nav-link fw-medium" href="/cart">
+              <Link className="nav-link fw-medium relative" href="/cart">
+                <span className="absolute -right-2 -top-2 inline-flex items-center justify-center gap-1 rounded-full bg-emerald-500 px-1.5 text-sm text-white">
+                  {products_in_cart.length}
+                  <span className="sr-only"> new emails</span>
+                </span>
                 <IoCartSharp
                   size={25}
                   color="grey"
                   className="mx-2 cursor-pointer"
                 />
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link fw-medium" href="/signin">
+              <Link className="nav-link fw-medium" href="/signin">
                 <TiUser size={25} color="grey" className="cursor-pointer" />
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

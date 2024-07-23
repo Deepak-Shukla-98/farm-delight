@@ -5,6 +5,7 @@ export const useSharedContext = () => useContext(SharedContext);
 
 const initialState = {
   user: {},
+  products_in_cart: [],
   isAuthenticated: false,
 };
 const SharedReducer = (state, action) => {
@@ -18,6 +19,11 @@ const SharedReducer = (state, action) => {
       return {
         ...state,
         isAuthenticated: action.payload,
+      };
+    case "UPDATE_CART":
+      return {
+        ...state,
+        products_in_cart: action.payload,
       };
   }
 };

@@ -42,7 +42,7 @@ export default function SignIn() {
         payload: data.user,
       });
       localStorage.setItem("token", `Bearer ${data.token}`);
-      router.push("/home");
+      router.push("/products");
     }
   };
   useEffect(() => {

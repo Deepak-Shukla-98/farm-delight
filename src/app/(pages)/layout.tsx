@@ -5,7 +5,6 @@ import isAuth from "@/components/utils/auth";
 import Header from "./@header/page";
 import { Suspense } from "react";
 import Loader from "@/components/uicomponents/spinner";
-import Breadcrumb from "@/components/uicomponents/breadcurmb";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -17,14 +16,7 @@ const metadata: Metadata = {
   description: "Created by Plura",
 };
 
-function HomeLayout({
-  children,
-  header,
-}: {
-  children: React.ReactNode;
-  header: React.ReactNode;
-  sidebar: React.ReactNode;
-}) {
+function HomeLayout({ children }: { children: React.ReactNode }) {
   return (
     <div>
       <Header />
