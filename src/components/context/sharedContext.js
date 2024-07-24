@@ -2,10 +2,14 @@
 import { createContext, useContext, useReducer } from "react";
 export const SharedContext = createContext();
 export const useSharedContext = () => useContext(SharedContext);
+const arr =
+  typeof window !== "undefined"
+    ? JSON.parse(localStorage.getItem("cart"))
+    : false;
 
 const initialState = {
   user: {},
-  products_in_cart: [],
+  products_in_cart: !!arr ? arr : [],
   isAuthenticated: false,
 };
 const SharedReducer = (state, action) => {

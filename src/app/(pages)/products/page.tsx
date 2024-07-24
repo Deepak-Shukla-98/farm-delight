@@ -2,7 +2,15 @@
 import { useSharedContext } from "@/components/context/sharedContext";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-
+import { toast } from "react-hot-toast";
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  photo: string;
+  status: boolean;
+  quantity?: number;
+}
 export default function Shop() {
   const {
     state: { products_in_cart },
@@ -14,6 +22,7 @@ export default function Shop() {
       name: "Tangy Oragne",
       price: 250,
       photo: "photo-1646753522408-077ef9839300",
+      quantity: 1,
       status: true,
     },
     {
@@ -21,6 +30,7 @@ export default function Shop() {
       name: "Lemony lemon",
       price: 125,
       photo: "photo-1651950519238-15835722f8bb",
+      quantity: 1,
       status: true,
     },
     {
@@ -28,6 +38,7 @@ export default function Shop() {
       name: "Sour green",
       price: 125,
       photo: "photo-1651950537598-373e4358d320",
+      quantity: 1,
       status: true,
     },
     {
@@ -35,6 +46,7 @@ export default function Shop() {
       name: "Melon Fresh",
       price: 250,
       photo: "photo-1651950540805-b7c71869e689",
+      quantity: 1,
       status: true,
     },
     {
@@ -42,6 +54,7 @@ export default function Shop() {
       name: "Riot Energy",
       price: 399,
       photo: "photo-1649261191624-ca9f79ca3fc6",
+      quantity: 1,
       status: true,
     },
     {
@@ -49,14 +62,35 @@ export default function Shop() {
       name: "Riot Red",
       price: 399,
       photo: "photo-1649261191606-cb2496e97eee",
+      quantity: 1,
       status: true,
     },
   ];
 
-  const handleDispatch = (data: {}) => {
-    dispatch({
-      type: "UPDATE_CART",
-      payload: [data, ...products_in_cart],
+  const handleDispatch = (data: Product) => {
+    let arr = products_in_cart.filter((f: any) => f.id !== data.id);
+    let product = products_in_cart.filter((f: any) => f.id === data.id);
+    if (product.length) {
+      dispatch({
+        type: "UPDATE_CART",
+        payload: [...arr, { ...product[0], quantity: product[0].quantity + 1 }],
+      });
+      localStorage.setItem(
+        "cart",
+        JSON.stringify([
+          ...arr,
+          { ...product[0], quantity: product[0].quantity + 1 },
+        ])
+      );
+    } else {
+      dispatch({
+        type: "UPDATE_CART",
+        payload: [...products_in_cart, data],
+      });
+      localStorage.setItem("cart", JSON.stringify([...products_in_cart, data]));
+    }
+    toast("Added to Cart", {
+      icon: "😃",
     });
   };
   return (

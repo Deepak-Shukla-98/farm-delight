@@ -9,6 +9,7 @@ const Header = () => {
   const {
     state: { products_in_cart },
   } = useSharedContext();
+
   return (
     <nav
       className="top-0 w-full py-3 bg-light opacity-85"
@@ -68,7 +69,10 @@ const Header = () => {
             <li className="nav-item px-1">
               <Link className="nav-link fw-medium relative" href="/cart">
                 <span className="absolute -right-2 -top-2 inline-flex items-center justify-center gap-1 rounded-full bg-emerald-500 px-1.5 text-sm text-white">
-                  {products_in_cart.length}
+                  {products_in_cart.reduce(
+                    (a: any, s: any) => a + (!!s.quantity ? s.quantity : 1),
+                    0
+                  )}
                   <span className="sr-only"> new emails</span>
                 </span>
                 <IoCartSharp

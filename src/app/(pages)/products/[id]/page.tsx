@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSharedContext } from "@/components/context/sharedContext";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 
 export default function Products() {
   const [data, setData] = useState({
@@ -10,6 +11,7 @@ export default function Products() {
     name: null,
     price: null,
     photo: null,
+    quantity: null,
     status: null,
   });
   const searchParams = useSearchParams();
@@ -21,10 +23,30 @@ export default function Products() {
     const data = JSON.parse(searchParams.get("product") || "");
     setData(data);
   }, []);
-  const handleDispatch = (data: {}) => {
-    dispatch({
-      type: "UPDATE_CART",
-      payload: [data, ...products_in_cart],
+  const handleDispatch = (data: any) => {
+    let arr = products_in_cart.filter((f: any) => f.id !== data.id);
+    let product = products_in_cart.filter((f: any) => f.id === data.id);
+    if (product.length) {
+      dispatch({
+        type: "UPDATE_CART",
+        payload: [...arr, { ...product[0], quantity: product[0].quantity + 1 }],
+      });
+      localStorage.setItem(
+        "cart",
+        JSON.stringify([
+          ...arr,
+          { ...product[0], quantity: product[0].quantity + 1 },
+        ])
+      );
+    } else {
+      dispatch({
+        type: "UPDATE_CART",
+        payload: [...products_in_cart, data],
+      });
+      localStorage.setItem("cart", JSON.stringify([...products_in_cart, data]));
+    }
+    toast("Added to Cart", {
+      icon: "😃",
     });
   };
   return (
@@ -79,7 +101,7 @@ export default function Products() {
                     Availability:
                   </span>
                   <span className="text-gray-600 dark:text-gray-300 mx-1">
-                    {data.price ? "In Stock" : "Out of Stock"}
+                    {data.status ? "In Stock" : "Out of Stock"}
                   </span>
                 </div>
               </div>
