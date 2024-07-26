@@ -1,17 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useParams } from "next/navigation";
 import { useSharedContext } from "@/components/context/sharedContext";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 
 export default function Products() {
+  const params = useParams();
   const [data, setData] = useState({
     id: null,
     name: null,
     price: null,
     photo: null,
-    quantity: null,
+    quantity: 1,
     status: null,
   });
   const searchParams = useSearchParams();
@@ -20,8 +21,15 @@ export default function Products() {
     dispatch,
   } = useSharedContext();
   useEffect(() => {
-    const data = JSON.parse(searchParams.get("product") || "");
-    setData(data);
+    let { id } = params;
+    let arr = products_in_cart.filter((f: any) => f.id === Number(id));
+    console.log({ arr });
+    if (arr.length) {
+      setData(arr?.[0]);
+    } else {
+      const data = JSON.parse(searchParams.get("product") || "");
+      setData(data);
+    }
   }, []);
   const handleDispatch = (data: any) => {
     let arr = products_in_cart.filter((f: any) => f.id !== data.id);
@@ -49,6 +57,49 @@ export default function Products() {
       icon: "😃",
     });
   };
+  const incQuantity = (id: any) => {
+    setData((o) => ({ ...o, quantity: o.quantity + 1 }));
+    let arr = products_in_cart.map((product: any) =>
+      product.id === id
+        ? {
+            ...product,
+            quantity: !!product.quantity ? product.quantity + 1 : 0 + 1,
+          }
+        : product
+    );
+    dispatch({
+      type: "UPDATE_CART",
+      payload: arr,
+    });
+    toast("Added to Cart", {
+      icon: "😃",
+    });
+    localStorage.setItem("cart", JSON.stringify(arr));
+  };
+  const decQuantity = (id: any) => {
+    setData((o) => ({ ...o, quantity: o.quantity - 1 }));
+    let arr = products_in_cart
+      .map((product: any) => {
+        if (product.id === id) {
+          if (!!product.quantity && product.quantity > 1) {
+            return { ...product, quantity: product.quantity - 1 };
+          } else {
+            return null;
+          }
+        } else {
+          return product;
+        }
+      })
+      .filter(Boolean);
+    dispatch({
+      type: "UPDATE_CART",
+      payload: arr,
+    });
+    toast("Removed", {
+      icon: "💔",
+    });
+    localStorage.setItem("cart", JSON.stringify(arr));
+  };
   return (
     <>
       <div className="bg-gray-100 dark:bg-gray-800 py-8">
@@ -61,21 +112,6 @@ export default function Products() {
                   src={`https://images.unsplash.com/${data.photo}?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwcm9maWxlLXBhZ2V8NjZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60`}
                   alt="Product Image"
                 />
-              </div>
-              <div className="flex -mx-2 mb-4">
-                <div className="w-1/2 px-2">
-                  <button
-                    className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
-                    onClick={() => handleDispatch(data)}
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-                <div className="w-1/2 px-2">
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 text-center dark:text-white py-2 px-4 rounded-full font-bold hover:bg-gray-300 dark:hover:bg-gray-600">
-                    <Link href={"/cart"}>Checkout</Link>
-                  </div>
-                </div>
               </div>
             </div>
             <div className="md:flex-1 px-4 mt-5">
@@ -106,25 +142,70 @@ export default function Products() {
                 </div>
               </div>
               <div className="mb-4">
-                <span className="font-bold text-gray-700 dark:text-gray-300">
-                  Select Size:
-                </span>
-                <div className="flex items-center mt-2">
-                  <button className="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600">
-                    S
-                  </button>
-                  <button className="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600">
-                    M
-                  </button>
-                  <button className="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600">
-                    L
-                  </button>
-                  <button className="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600">
-                    XL
-                  </button>
+                <label htmlFor="counter-input" className="sr-only">
+                  Choose quantity:
+                </label>
+                <div className="flex items-center justify-between md:order-3 ">
+                  <div className="flex items-center">
+                    <button
+                      type="button"
+                      id="decrement-button"
+                      data-input-counter-decrement="counter-input"
+                      className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                      onClick={() => decQuantity(data.id)}
+                    >
+                      <svg
+                        className="h-2.5 w-2.5 text-gray-900 dark:text-white"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 18 2"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M1 1h16"
+                        />
+                      </svg>
+                    </button>
+                    <input
+                      type="text"
+                      id="counter-input"
+                      data-input-counter
+                      className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
+                      placeholder=""
+                      value={data.quantity || ""}
+                      required
+                    />
+                    <button
+                      type="button"
+                      id="increment-button"
+                      data-input-counter-increment="counter-input"
+                      className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                      onClick={() => incQuantity(data.id)}
+                    >
+                      <svg
+                        className="h-2.5 w-2.5 text-gray-900 dark:text-white"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 18 18"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 1v16M1 9h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div>
+              <div className="mb-6">
                 <span className="font-bold text-gray-700 dark:text-gray-300">
                   Product Description:
                 </span>
@@ -138,6 +219,21 @@ export default function Products() {
                   mauris blandit. Morbi fermentum libero vel nisl suscipit, nec
                   tincidunt mi consectetur.
                 </p>
+              </div>
+              <div className="flex -mx-2 mb-4">
+                <div className="w-1/2 px-2">
+                  <button
+                    className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
+                    onClick={() => handleDispatch(data)}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+                <div className="w-1/2 px-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 text-center dark:text-white py-2 px-4 rounded-full font-bold hover:bg-gray-300 dark:hover:bg-gray-600">
+                    <Link href={"/cart"}>Checkout</Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
