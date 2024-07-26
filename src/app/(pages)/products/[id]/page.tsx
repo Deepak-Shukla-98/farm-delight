@@ -12,9 +12,10 @@ export default function Products() {
     name: null,
     price: null,
     photo: null,
-    quantity: 1,
+    quantity: 0,
     status: null,
   });
+  const [in_cart, set_in_cart] = useState(false);
   const searchParams = useSearchParams();
   const {
     state: { products_in_cart },
@@ -23,14 +24,16 @@ export default function Products() {
   useEffect(() => {
     let { id } = params;
     let arr = products_in_cart.filter((f: any) => f.id === Number(id));
-    console.log({ arr });
     if (arr.length) {
+      set_in_cart(true);
       setData(arr?.[0]);
     } else {
+      set_in_cart(false);
       const data = JSON.parse(searchParams.get("product") || "");
-      setData(data);
+      setData({ ...data, quantity: 0 });
     }
-  }, []);
+  }, [products_in_cart.length]);
+
   const handleDispatch = (data: any) => {
     let arr = products_in_cart.filter((f: any) => f.id !== data.id);
     let product = products_in_cart.filter((f: any) => f.id === data.id);
@@ -46,10 +49,11 @@ export default function Products() {
           { ...product[0], quantity: product[0].quantity + 1 },
         ])
       );
+      setData((o) => ({ ...o, quantity: o.quantity + 1 }));
     } else {
       dispatch({
         type: "UPDATE_CART",
-        payload: [...products_in_cart, data],
+        payload: [...products_in_cart, { ...data, quantity: 1 }],
       });
       localStorage.setItem("cart", JSON.stringify([...products_in_cart, data]));
     }
@@ -58,25 +62,32 @@ export default function Products() {
     });
   };
   const incQuantity = (id: any) => {
-    setData((o) => ({ ...o, quantity: o.quantity + 1 }));
-    let arr = products_in_cart.map((product: any) =>
-      product.id === id
-        ? {
-            ...product,
-            quantity: !!product.quantity ? product.quantity + 1 : 0 + 1,
-          }
-        : product
-    );
-    dispatch({
-      type: "UPDATE_CART",
-      payload: arr,
-    });
-    toast("Added to Cart", {
-      icon: "😃",
-    });
-    localStorage.setItem("cart", JSON.stringify(arr));
+    if (in_cart) {
+      setData((o) => ({ ...o, quantity: o.quantity + 1 }));
+      let arr = products_in_cart.map((product: any) =>
+        product.id === id
+          ? {
+              ...product,
+              quantity: !!product.quantity ? product.quantity + 1 : 0 + 1,
+            }
+          : product
+      );
+      dispatch({
+        type: "UPDATE_CART",
+        payload: arr,
+      });
+      toast("Added to Cart", {
+        icon: "😃",
+      });
+      localStorage.setItem("cart", JSON.stringify(arr));
+    } else {
+      handleDispatch(data);
+    }
   };
   const decQuantity = (id: any) => {
+    if (!in_cart) {
+      return;
+    }
     setData((o) => ({ ...o, quantity: o.quantity - 1 }));
     let arr = products_in_cart
       .map((product: any) => {
@@ -106,9 +117,9 @@ export default function Products() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row -mx-4">
             <div className="md:flex-1 px-4">
-              <div className="h-[460px] rounded-lg bg-gray-300 dark:bg-gray-700 mb-4">
+              <div className="h-[460px] rounded-2xl bg-gray-300 dark:bg-gray-700 mb-4">
                 <img
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-2xl"
                   src={`https://images.unsplash.com/${data.photo}?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwcm9maWxlLXBhZ2V8NjZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60`}
                   alt="Product Image"
                 />
@@ -176,7 +187,7 @@ export default function Products() {
                       data-input-counter
                       className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
                       placeholder=""
-                      value={data.quantity || ""}
+                      value={data.quantity}
                       required
                     />
                     <button
