@@ -6,7 +6,9 @@ import { IoCartSharp } from "react-icons/io5";
 import { TiUser } from "react-icons/ti";
 
 function Default() {
-  const [isToggleOpen, setIsToggleOpen] = useState(false);
+  const [isToggleOpen, setIsToggleOpen] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 400 : false
+  );
   return (
     <main className="main" id="top">
       <nav
