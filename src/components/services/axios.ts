@@ -30,11 +30,10 @@ export const postProducts = async (payload: any) => {
 };
 export const updateProducts = async (payload: any) => {
   return await ServiceHandler(
-    axios.put(`/product/`, payload.data, {
+    axios.put(`/product/`, payload, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-      params: { id: payload.data.id },
     })
   );
 };

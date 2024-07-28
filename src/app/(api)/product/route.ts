@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
         discount: parseFloat(discount),
         photo,
         inventory: parseInt(inventory, 10),
-        status: status === "In Stock",
+        status: status === "in_stock",
       },
     });
     return new Response(JSON.stringify(product), {
@@ -133,7 +133,7 @@ export async function PUT(request: NextRequest) {
         discount: parseFloat(discount),
         photo,
         inventory: parseInt(inventory, 10),
-        status: status === "In Stock",
+        status: status === "in_stock",
       },
     });
     return new Response(JSON.stringify(updatedProduct), {
