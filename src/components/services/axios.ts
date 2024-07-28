@@ -39,11 +39,11 @@ export const updateProducts = async (payload: any) => {
 };
 export const deleteProduct = async (payload: any) => {
   return await ServiceHandler(
-    axios.get(`/product/${payload.id}`, {
+    axios.delete(`/product/`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-      params: payload,
+      params: { id: payload.id },
     })
   );
 };

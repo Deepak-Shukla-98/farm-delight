@@ -17,6 +17,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "@nextui-org/modal";
+import Link from "next/link";
 
 const schema = yup.object().shape({
   name: yup.string().required("Enter product name"),
@@ -55,7 +56,6 @@ const ProductListPage = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
-
   const handleEdit = (product: any) => {
     setSelectedProduct({
       ...product,
@@ -63,7 +63,6 @@ const ProductListPage = () => {
     });
     setIsModalOpen(true);
   };
-
   const handleUpdate = async (values: any) => {
     console.log({ values });
     const formData = new FormData();
@@ -87,7 +86,13 @@ const ProductListPage = () => {
   };
   return (
     <div className="container mt-5">
-      <h2 className="text-2xl font-bold mb-4">Product List</h2>
+      <div className="flex justify-between">
+        <h2 className="text-2xl font-bold mb-4">Product List</h2>
+        <Link href={"/add-products"} className="px-4 underline cursor-pointer">
+          Add
+        </Link>
+      </div>
+
       <div className="w-full overflow-x-auto">
         <table className="w-full text-left border border-separate rounded border-slate-200">
           <thead>
