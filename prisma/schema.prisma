@@ -1,62 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
+enum UserType {
+  ADMIN
+  CUSTOMER
 }
 
 model User {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  email         String      @unique
-  first_name    String
-  last_name     String
-  password      String
-  profile       Profile?
-  posts         Post[]
-  comments      Comment[]
-  followedBy    User[]      @relation("UserFollows", fields: [followedByIDs], references: [id])
-  followedByIDs String[]    @db.ObjectId
-  following     User[]      @relation("UserFollows", fields: [followingIDs], references: [id])
-  followingIDs  String[]    @db.ObjectId
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String   @unique
+  password     String
+  userType     UserType  
+  first_name   String
+  last_name    String
+  address      String?
+  apartment    String?
+  city         String?
+  state        String?
+  pincode      String?
+  phone        String?
+  orders       Order[]
+  cart         Cart?
 }
 
-model Profile {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId  
-  username      String      @unique
-  first_name    String
-  last_name     String
-  dob           String?
-  gender        String?
-  bio           String?
-  address       Address?
-  profileImg    Bytes?
-  user          User        @relation(fields: [userId], references: [id])
-  userId        String      @unique @db.ObjectId
+model Product {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  price     Float
+  discount  Float
+  photo     String
+  inventory Int
+  status    Boolean
+  orders    Order[]
+  cartItems CartItem[]
 }
-model Post {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  title         String
-  body          String
-  author_name   String
-  author        User        @relation(fields: [authorId], references: [id])
-  authorId      String      @db.ObjectId
-  comments      Comment[]
+
+model Order {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  price     Float
+  discount  Float
+  quantity  Int
+  status    Boolean
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  payment   Payment?
+  shipping  Shipping?
+  couponId  String?
+  coupon    Coupon?  @relation(fields: [couponId], references: [id])
 }
-model Comment {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  comment       String
-  name          String
-  author        User        @relation(fields: [authorId], references: [id])
-  authorId      String
-  post          Post        @relation(fields: [postId], references: [id])
-  postId        String      @db.ObjectId
+
+model Cart {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  items     CartItem[]
 }
-// Address is an embedded document
-type Address {
-  street    String
+
+model CartItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id])
+}
+
+model Payment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @unique
+  order     Order    @relation(fields: [orderId], references: [id])
+  method    String
+  amount    Float
+  status    String
+  date      DateTime @default(now())
+}
+
+model Shipping {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @unique
+  order     Order    @relation(fields: [orderId], references: [id])
+  address   String
   city      String
   state     String
-  zip       String
+  pinCode   String
+  status    String
+  shippedAt DateTime?
+  deliveredAt DateTime?
+}
+
+model Coupon {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  code      String   @unique
+  discount  Float
+  expiry    DateTime
+  isActive  Boolean
+  orders    Order[]
 }

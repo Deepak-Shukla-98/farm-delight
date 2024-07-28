@@ -8,6 +8,7 @@ interface User {
   last_name: string;
   email: string;
   password: string;
+  userType: string;
 }
 
 export async function POST(request: Request) {
@@ -37,6 +38,7 @@ export async function POST(request: Request) {
         last_name: last_name,
         email: email,
         password: passwordhash,
+        userType: "CUSTOMER",
       },
     });
     return new Response(JSON.stringify(newUser), {
