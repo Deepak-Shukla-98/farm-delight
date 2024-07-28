@@ -2,7 +2,7 @@
 import { Inter as FontSans } from "next/font/google";
 import { Metadata } from "next";
 import isAuth from "@/components/utils/auth";
-import Header from "./@header/page";
+import Header from "./_header/page";
 import { Suspense } from "react";
 import Loader from "@/components/uicomponents/spinner";
 
