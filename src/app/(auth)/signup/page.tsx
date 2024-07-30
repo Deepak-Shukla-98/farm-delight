@@ -47,7 +47,7 @@ export default function LoginForm() {
   };
   return (
     <div className="h-screen w-screen flex items-center">
-      <Card className="mx-auto max-w-sm">
+      <Card className="mx-auto max-w-sm border-0 md:border">
         <CardHeader>
           <CardTitle className="text-xl">Sign Up</CardTitle>
           <CardDescription>
