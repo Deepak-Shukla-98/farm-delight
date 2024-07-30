@@ -17,6 +17,11 @@ import { useRouter } from "next/navigation";
 const Header = () => {
   const router = useRouter();
   const [isToggleOpen, setIsToggleOpen] = useState(false);
+  useEffect(() => {
+    setIsToggleOpen(
+      typeof window !== "undefined" ? window.innerWidth < 992 : false
+    );
+  }, []);
   const {
     state: { products_in_cart, isAuthenticated },
     dispatch,
@@ -116,34 +121,29 @@ const Header = () => {
                 Contact{" "}
               </Link>
             </li>
-            <li>
-              <Link
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent relative"
-                href="/cart"
-              >
-                <span className="absolute -right-2 -top-2 inline-flex items-center justify-center gap-1 rounded-full bg-emerald-500 px-1.5 text-sm text-white">
-                  {products_in_cart.reduce(
-                    (a: any, s: any) => a + (!!s.quantity ? s.quantity : 1),
-                    0
-                  )}
-                  <span className="sr-only"> new emails</span>
+            <li className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent ">
+              <Link href="/cart">
+                <span className="relative">
+                  <IoCartSharp
+                    size={25}
+                    color="grey"
+                    className="cursor-pointer"
+                  />
+                  <span className="absolute left-5 -top-2 inline-flex items-center justify-center gap-1 rounded-full bg-emerald-500 px-1.5 text-sm text-white">
+                    {products_in_cart.reduce(
+                      (a: any, s: any) => a + (!!s.quantity ? s.quantity : 1),
+                      0
+                    )}
+                    <span className="sr-only"> new emails</span>
+                  </span>
                 </span>
-                <IoCartSharp
-                  size={25}
-                  color="grey"
-                  className="mx-2 cursor-pointer"
-                />
               </Link>
             </li>
             <li className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
               {isAuthenticated ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger>
-                    <TiUser
-                      size={25}
-                      color="grey"
-                      className="cursor-pointer mx-2"
-                    />
+                    <TiUser size={25} color="grey" className="cursor-pointer" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>

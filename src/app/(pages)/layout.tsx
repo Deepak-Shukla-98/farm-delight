@@ -29,7 +29,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
     <div>
       <Header />
       <Suspense fallback={<Loader display={"grid"} />}>
-        <div>{children}</div>
+        <div className="bg-white">{children}</div>
       </Suspense>
     </div>
   );
