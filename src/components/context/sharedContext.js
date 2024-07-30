@@ -6,11 +6,23 @@ const arr =
   typeof window !== "undefined"
     ? JSON.parse(localStorage.getItem("cart"))
     : false;
-
+const token_avbl =
+  typeof window !== "undefined"
+    ? !!localStorage.getItem("token")
+      ? true
+      : false
+    : false;
+const admin =
+  typeof window !== "undefined"
+    ? !!localStorage.getItem("user_type")
+      ? true
+      : false
+    : false;
 const initialState = {
   user: {},
   products_in_cart: !!arr ? arr : [],
-  isAuthenticated: false,
+  isAuthenticated: token_avbl,
+  isAdmin: admin,
 };
 const SharedReducer = (state, action) => {
   switch (action.type) {
@@ -23,6 +35,11 @@ const SharedReducer = (state, action) => {
       return {
         ...state,
         isAuthenticated: action.payload,
+      };
+    case "SET_ADMIN_STATE":
+      return {
+        ...state,
+        isAdmin: action.payload,
       };
     case "UPDATE_CART":
       return {

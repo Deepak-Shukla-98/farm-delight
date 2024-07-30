@@ -1,21 +1,45 @@
+"use client";
 import { useSharedContext } from "@/components/context/sharedContext";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoCartSharp } from "react-icons/io5";
 import { TiUser } from "react-icons/ti";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
+  const router = useRouter();
   const [isToggleOpen, setIsToggleOpen] = useState(false);
   const {
-    state: { products_in_cart },
+    state: { products_in_cart, isAuthenticated },
+    dispatch,
   } = useSharedContext();
+  const Logout = () => {
+    dispatch({
+      type: "SET_AUTH_STATE",
+      payload: false,
+    });
+    dispatch({
+      type: "SET_LOGIN_USER",
+      payload: {},
+    });
+    localStorage.clear();
+    router.push("/signin");
+  };
 
   return (
     <nav
       className="top-0 w-full py-3 bg-light opacity-85"
       style={{ backgroundColor: "#FAFBFD" }}
     >
-      <div className="container mx-auto flex items-center justify-between">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-4">
         <a className="flex items-center" href="/">
           <img
             className="inline-block align-top"
@@ -28,46 +52,75 @@ const Header = () => {
           </span>
         </a>
         <button
-          className="navbar-toggler collapsed"
+          data-collapse-toggle="navbar-default"
           type="button"
-          aria-expanded={isToggleOpen}
+          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+          aria-controls="navbar-default"
+          aria-expanded="false"
           onClick={() => setIsToggleOpen(!isToggleOpen)}
         >
-          <span className="navbar-toggler-icon"></span>
+          <span className="sr-only">Open main menu</span>
+          <svg
+            className="w-5 h-5"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 17 14"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M1 1h15M1 7h15M1 13h15"
+            />
+          </svg>
         </button>
         <div
           className={`${
-            isToggleOpen ? "block" : "hidden"
-          } navbar-collapse border-lg-0 mt-4 mt-lg-0 lg:flex lg:items-center`}
-          id="navbarSupportedContent"
+            isToggleOpen ? "hidden" : ""
+          } w-full md:block md:w-auto`}
+          id="navbar-default"
         >
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0 flex space-x-4">
-            <li className="nav-item px-2">
-              <a
-                className="nav-link fw-medium active"
+          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-gray-800 dark:border-gray-700">
+            <li>
+              <Link
+                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 aria-current="page"
                 href="/"
               >
                 Home
-              </a>
+              </Link>
             </li>
-            <li className="nav-item px-2">
-              <Link className="nav-link fw-medium" href="/products">
+            <li>
+              <Link
+                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                href="/products"
+              >
                 Shop
               </Link>
             </li>
-            <li className="nav-item px-2">
-              <Link className="nav-link fw-medium" href="/about">
+            <li>
+              <Link
+                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                href="/about"
+              >
                 About
               </Link>
             </li>
-            <li className="nav-item px-2">
-              <Link className="nav-link fw-medium" href="/contact">
+            <li>
+              <Link
+                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                href="/contact"
+              >
                 Contact{" "}
               </Link>
             </li>
-            <li className="nav-item px-1">
-              <Link className="nav-link fw-medium relative" href="/cart">
+            <li>
+              <Link
+                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent relative"
+                href="/cart"
+              >
                 <span className="absolute -right-2 -top-2 inline-flex items-center justify-center gap-1 rounded-full bg-emerald-500 px-1.5 text-sm text-white">
                   {products_in_cart.reduce(
                     (a: any, s: any) => a + (!!s.quantity ? s.quantity : 1),
@@ -82,10 +135,33 @@ const Header = () => {
                 />
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link fw-medium" href="/signin">
-                <TiUser size={25} color="grey" className="cursor-pointer" />
-              </Link>
+            <li className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+              {isAuthenticated ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <TiUser
+                      size={25}
+                      color="grey"
+                      className="cursor-pointer mx-2"
+                    />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <Link className="nav-link fw-medium" href="/history">
+                        History
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={Logout}>Logout</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link href="/signin" className="mx-2">
+                  <TiUser size={25} color="grey" className="cursor-pointer" />
+                </Link>
+              )}
             </li>
           </ul>
         </div>

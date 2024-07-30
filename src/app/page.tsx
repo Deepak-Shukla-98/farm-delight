@@ -1,16 +1,19 @@
 "use client";
 import "../../public/assets/css/theme.min.css";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoCartSharp } from "react-icons/io5";
 import { TiUser } from "react-icons/ti";
 
 function Default() {
-  const [isToggleOpen, setIsToggleOpen] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 400 : false
-  );
+  const [isToggleOpen, setIsToggleOpen] = useState(false);
+  useEffect(() => {
+    setIsToggleOpen(
+      typeof window !== "undefined" ? window.innerWidth < 992 : false
+    );
+  }, []);
   return (
-    <main className="main" id="top">
+    <main className="main bg-white" id="top">
       <nav
         className="navbar navbar-expand-lg navbar-light fixed-top py-3 bg-light opacity-85"
         data-navbar-on-scroll="data-navbar-on-scroll"

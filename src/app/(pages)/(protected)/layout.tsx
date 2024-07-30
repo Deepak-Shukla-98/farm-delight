@@ -1,10 +1,9 @@
 "use client";
 import { Inter as FontSans } from "next/font/google";
 import { Metadata } from "next";
-import Header from "./_header/page";
-import { Suspense } from "react";
-import Loader from "@/components/uicomponents/spinner";
+import isAuth from "@/components/utils/auth";
 import { useState, useEffect } from "react";
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -27,11 +26,8 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   }
   return (
     <div>
-      <Header />
-      <Suspense fallback={<Loader display={"grid"} />}>
-        <div>{children}</div>
-      </Suspense>
+      <div>{children}</div>
     </div>
   );
 }
-export default HomeLayout;
+export default isAuth(HomeLayout);

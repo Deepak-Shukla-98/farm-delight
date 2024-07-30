@@ -16,7 +16,9 @@ interface IFormInputs {
   phone: string;
   saveInfo: boolean;
 }
-
+interface OrderFormProps {
+  handleSubmit: (data: void) => void;
+}
 const schema = yup.object().shape({
   emailOrPhone: yup.string().required("Enter an email or phone number"),
   newsOffers: yup.boolean(),
@@ -30,8 +32,47 @@ const schema = yup.object().shape({
   phone: yup.string().required("Enter a phone number"),
   saveInfo: yup.boolean(),
 });
-
-const OrderForm: React.FC = () => {
+const states = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Delhi",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jammu & Kashmir",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Maharashtra",
+  "Madhya Pradesh",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Tripura",
+  "Telangana",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman & Nicobar (UT)",
+  "Chandigarh (UT)",
+  "Dadra & Nagar Haveli (UT)",
+  "Daman & Diu (UT)",
+  "Lakshadweep (UT)",
+  "Puducherry (UT)",
+];
+const OrderForm: React.FC<OrderFormProps> = ({
+  handleSubmit = () => {},
+}: any) => {
   const initialValues: IFormInputs = {
     emailOrPhone: "",
     newsOffers: false,
@@ -47,12 +88,13 @@ const OrderForm: React.FC = () => {
   };
 
   const onSubmit = (values: IFormInputs) => {
-    console.log(values);
+    handleSubmit(values);
   };
 
   return (
     <Formik
       initialValues={initialValues}
+      enableReinitialize
       validationSchema={schema}
       onSubmit={onSubmit}
     >
@@ -78,7 +120,7 @@ const OrderForm: React.FC = () => {
             />
           </div>
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <Field
               type="checkbox"
               name="newsOffers"
@@ -90,7 +132,7 @@ const OrderForm: React.FC = () => {
             <label className="text-sm font-medium">
               Email me with news and offers
             </label>
-          </div>
+          </div> */}
 
           <h2 className="text-lg font-semibold mb-4">Delivery</h2>
           <div className="mb-4">
@@ -177,7 +219,12 @@ const OrderForm: React.FC = () => {
                 name="state"
                 className="w-full border border-gray-300 p-2 rounded-md"
               >
-                <option value="Telangana">Telangana</option>
+                <option value="">Select</option>
+                {states.map((d, i) => (
+                  <option value={d} key={i}>
+                    {d}
+                  </option>
+                ))}
                 {/* Add more options as needed */}
               </Field>
               <ErrorMessage
@@ -228,7 +275,10 @@ const OrderForm: React.FC = () => {
               Save this information for next time
             </label>
           </div>
-          <button className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">
+          <button
+            type="submit"
+            className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
+          >
             Place Order
           </button>
         </Form>

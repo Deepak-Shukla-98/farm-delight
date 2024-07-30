@@ -17,6 +17,9 @@ function Page() {
     products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 50;
   let store = 99;
   let total = sum + store - discount;
+  const handleSubmit = (data: void) => {
+    console.log({ data, products_in_cart });
+  };
   return (
     <>
       <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32">
@@ -96,7 +99,7 @@ function Page() {
             </div>
           ) : null}
         </div>
-        <OrderForm />
+        <OrderForm handleSubmit={handleSubmit} />
       </div>
     </>
   );
