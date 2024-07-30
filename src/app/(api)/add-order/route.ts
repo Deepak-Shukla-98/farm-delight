@@ -1,3 +1,4 @@
+import { apiMiddleware } from "@/components/utils/apimiddleware";
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -5,9 +6,18 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
+    const { id } = (await apiMiddleware(request)) as { id: string };
+    if (!id) {
+      return new NextResponse(JSON.stringify({ error: "Not Authorised" }), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        status: 401,
+      });
+    }
+
     const { user, orders } = await request.json();
 
-    // Validate input
     if (!user || !orders || !Array.isArray(orders) || orders.length === 0) {
       return new NextResponse(JSON.stringify({ error: "Invalid input" }), {
         headers: { "Content-Type": "application/json" },
@@ -15,15 +25,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create user and orders in a transaction
-    const createdUser = await prisma.$transaction(async (prisma) => {
-      const newUser = await prisma.user.create({
+    const transaction = await prisma.$transaction(async (prisma) => {
+      const updatedUser = await prisma.user.update({
+        where: { id: id },
         data: {
-          email: user.email,
-          password: user.password,
-          userType: user.userType,
-          first_name: user.first_name,
-          last_name: user.last_name,
           address: user.address,
           apartment: user.apartment,
           city: user.city,
@@ -33,14 +38,16 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      const orderPromises = orders.map((order) =>
+      const orderPromises = orders.map((order: any) =>
         prisma.order.create({
           data: {
-            userId: newUser.id,
+            userId: id,
             status: order.status,
             orderItems: {
               create: order.items.map((item: any) => ({
-                productId: item.productId,
+                productId: item.id,
+                name: item.name,
+                photo: item.photo,
                 price: item.price,
                 discount: item.discount,
                 quantity: item.quantity,
@@ -49,13 +56,12 @@ export async function POST(request: NextRequest) {
           },
         })
       );
-
       await Promise.all(orderPromises);
 
-      return newUser;
+      return updatedUser;
     });
 
-    return new NextResponse(JSON.stringify(createdUser), {
+    return new NextResponse(JSON.stringify(transaction), {
       headers: { "Content-Type": "application/json" },
       status: 201,
     });
@@ -64,7 +70,9 @@ export async function POST(request: NextRequest) {
     return new NextResponse(
       JSON.stringify({ error: "Internal Server Error" }),
       {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         status: 500,
       }
     );

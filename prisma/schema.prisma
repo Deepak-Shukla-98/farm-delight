@@ -26,58 +26,42 @@ model User {
   pincode     String?
   phone       String?
   orders      Order[]
-  cart         Cart?
 }
 
 model Product {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   price      Float
   discount   Float
   photo      String
   inventory  Int
   status     Boolean
-  orderItems OrderItem[]
-  cartItems CartItem[]
+  orders     OrderItem[]
 }
 
 model Order {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId     String
-  user       User        @relation(fields: [userId], references: [id])
-  status     Boolean
-  orderItems OrderItem[]
-  payment    Payment?
-  shipping   Shipping?
-  couponId   String?
-  coupon     Coupon?     @relation(fields: [couponId], references: [id])
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  status      Boolean
+  orderItems  OrderItem[]
+  payment     Payment?
+  shipping    Shipping?
+  couponId    String?
+  coupon      Coupon?       @relation(fields: [couponId], references: [id])
 }
 
 model OrderItem {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  orderId   String
-  order     Order       @relation(fields: [orderId], references: [id])
-  productId String
-  product   Product     @relation(fields: [productId], references: [id])
-  price     Float
-  discount  Float
-  quantity  Int
-}
-
-model Cart {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String     @unique
-  user      User       @relation(fields: [userId], references: [id])
-  items     CartItem[]
-}
-
-model CartItem {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  productId String
-  product   Product    @relation(fields: [productId], references: [id])
-  quantity  Int
-  cartId    String
-  cart      Cart       @relation(fields: [cartId], references: [id])
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
+  orderId    String
+  order      Order         @relation(fields: [orderId], references: [id])
+  productId  String
+  product    Product       @relation(fields: [productId], references: [id])
+  name       String
+  price      Float
+  discount   Float
+  photo      String
+  quantity   Int
 }
 
 model Payment {
