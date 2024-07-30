@@ -46,7 +46,7 @@ export default function LoginForm() {
     router.push("/signin");
   };
   return (
-    <div className="h-screen w-screen flex items-center">
+    <div className="h-screen w-screen flex mt-20 lg:items-center lg:mt-0">
       <Card className="mx-auto max-w-sm border-0 md:border">
         <CardHeader>
           <CardTitle className="text-xl">Sign Up</CardTitle>
