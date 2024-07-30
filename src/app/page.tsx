@@ -121,7 +121,10 @@ function Default() {
                 Enjoy the nutritious benefits of makhana with our easy online
                 ordering and subscription options.
               </p>
-              <a className="btn btn-lg btn-success" href="#" role="button">
+              <a
+                className="btn btn-lg btn-success relative mt-2 z-10"
+                href="/products"
+              >
                 Order Now
               </a>
             </div>
@@ -262,12 +265,12 @@ function Default() {
                           Perfect for those who want to quickly replenish their
                           stock with high-quality, nutrient-rich makhana.
                         </p>
-                        <button
+                        <a
                           className="btn btn-lg btn-light text-success"
-                          type="button"
+                          href="/products"
                         >
                           Browse Products
-                        </button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -700,9 +703,9 @@ function Default() {
                   <p className="mb-0 text-white fs--1 fs-sm-1">
                     write email to us info@farmdelight.com
                   </p>
-                  <button className="btn btn-light text-success" type="button">
-                    Sing In
-                  </button>
+                  <a className="btn btn-light text-success" href="/signin">
+                    Sign In
+                  </a>
                 </div>
               </div>
             </div>

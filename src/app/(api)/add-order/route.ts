@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       return updatedUser;
     });
 
-    return new NextResponse(JSON.stringify(transaction), {
+    return new NextResponse(JSON.stringify({ message: "Order placed" }), {
       headers: { "Content-Type": "application/json" },
       status: 201,
     });
