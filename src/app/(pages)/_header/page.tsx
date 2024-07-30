@@ -158,7 +158,7 @@ const Header = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Link href="/signin" className="mx-2">
+                <Link href="/signin">
                   <TiUser size={25} color="grey" className="cursor-pointer" />
                 </Link>
               )}

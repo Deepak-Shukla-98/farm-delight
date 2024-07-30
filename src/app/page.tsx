@@ -4,13 +4,18 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { IoCartSharp } from "react-icons/io5";
 import { TiUser } from "react-icons/ti";
+import { useTheme } from "next-themes";
 
 function Default() {
+  const { setTheme } = useTheme();
   const [isToggleOpen, setIsToggleOpen] = useState(false);
   useEffect(() => {
     setIsToggleOpen(
       typeof window !== "undefined" ? window.innerWidth < 992 : false
     );
+  }, []);
+  useEffect(() => {
+    setTheme("light");
   }, []);
   return (
     <main className="main bg-white" id="top">
