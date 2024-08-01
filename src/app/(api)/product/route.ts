@@ -8,31 +8,22 @@ const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    const { id } = (await apiMiddleware(request)) as { id: string };
-    if (!!id) {
-      const products = await prisma.product.findMany();
-      if (!products) {
-        return new Response(JSON.stringify({ error: "No Products" }), {
-          headers: {
-            "Content-type": "application/json",
-          },
-          status: 404, // Not Found
-        });
-      }
-      return new Response(JSON.stringify(products), {
+    const products = await prisma.product.findMany();
+    if (!products) {
+      return new Response(JSON.stringify({ error: "No Products" }), {
         headers: {
           "Content-type": "application/json",
         },
-        status: 200,
-      });
-    } else {
-      return new Response(JSON.stringify({ error: "Not Authorised" }), {
-        headers: {
-          "Content-type": "application/json",
-        },
-        status: 401, // Not Found
+        status: 404, // Not Found
       });
     }
+    let data = products.map((d) => ({ ...d, quantity: 1 }));
+    return new Response(JSON.stringify(data), {
+      headers: {
+        "Content-type": "application/json",
+      },
+      status: 200,
+    });
   } catch (error) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       headers: {
@@ -53,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
     const formData = await request.formData();
     const data: { [key: string]: any } = {};
-    const uploadsDir = path.join(process.cwd(), "uploads");
+    const uploadsDir = path.join(process.cwd(), "public/uploads");
     // Ensure the uploads directory exists
     await fs.mkdir(uploadsDir, { recursive: true });
     formData.forEach(async (value, key) => {
@@ -101,7 +92,7 @@ export async function PUT(request: NextRequest) {
     }
     const formData = await request.formData();
     const data: { [key: string]: any } = {};
-    const uploadsDir = path.join(process.cwd(), "uploads");
+    const uploadsDir = path.join(process.cwd(), "public/uploads");
     // Ensure the uploads directory exists
     await fs.mkdir(uploadsDir, { recursive: true });
     formData.forEach(async (value, key) => {
@@ -179,7 +170,7 @@ export async function DELETE(request: NextRequest) {
       where: { id: productId },
     });
     // Delete the file associated with the product
-    const filePath = path.join(process.cwd(), product.photo);
+    const filePath = path.join(process.cwd(), `/public${product.photo}`);
     await fs.unlink(filePath);
     return new Response(
       JSON.stringify({ message: "Product deleted successfully" }),

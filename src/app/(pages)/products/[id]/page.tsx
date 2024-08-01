@@ -4,6 +4,7 @@ import { useSearchParams, useParams } from "next/navigation";
 import { useSharedContext } from "@/components/context/sharedContext";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
+import { getProducts } from "@/components/services/axios";
 
 export default function Products() {
   const params = useParams();
@@ -11,28 +12,36 @@ export default function Products() {
     id: null,
     name: null,
     price: null,
-    photo: null,
+    photo: "",
     quantity: 0,
     status: null,
   });
   const [in_cart, set_in_cart] = useState(false);
-  const searchParams = useSearchParams();
+  const [products, setProducts] = useState<any>([]);
+  const getData = async () => {
+    let data = await getProducts({});
+    setProducts(data);
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   const {
     state: { products_in_cart },
     dispatch,
   } = useSharedContext();
   useEffect(() => {
     let { id } = params;
-    let arr = products_in_cart.filter((f: any) => f.id === Number(id));
+    let arr = products_in_cart.filter((f: any) => f.id === id);
     if (arr.length) {
       set_in_cart(true);
       setData(arr?.[0]);
     } else {
       set_in_cart(false);
-      const data = JSON.parse(searchParams.get("product") || "");
+      const [data] = products.filter((f: any) => f.id === id);
+      console.log({ data });
       setData({ ...data, quantity: 0 });
     }
-  }, [products_in_cart.length]);
+  }, [products_in_cart.length, products]);
 
   const handleDispatch = (data: any) => {
     let arr = products_in_cart.filter((f: any) => f.id !== data.id);
@@ -120,7 +129,7 @@ export default function Products() {
               <div className="h-[460px] rounded-2xl bg-gray-300 dark:bg-gray-700 mb-4">
                 <img
                   className="w-full h-full object-cover rounded-2xl"
-                  src={`https://images.unsplash.com/${data.photo}?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwcm9maWxlLXBhZ2V8NjZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60`}
+                  src={data.photo}
                   alt="Product Image"
                 />
               </div>

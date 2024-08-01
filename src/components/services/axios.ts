@@ -47,3 +47,40 @@ export const deleteProduct = async (payload: any) => {
     })
   );
 };
+export const placeOrders = async (payload: any) => {
+  return await ServiceHandler(
+    axios.post(`/add-order/`, payload, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+  );
+};
+export const getOrderHistory = async (payload: any) => {
+  return await ServiceHandler(
+    axios.get(`/add-order/`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+  );
+};
+export const getOrdersById = async (payload: any) => {
+  return await ServiceHandler(
+    axios.get(`/add-order/`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+      params: payload,
+    })
+  );
+};
+export const getAdminOrders = async (payload: any) => {
+  return await ServiceHandler(
+    axios.get(`/orders/`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+  );
+};

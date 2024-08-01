@@ -20,7 +20,7 @@ interface OrderFormProps {
   handleSubmit: (data: void) => void;
 }
 const schema = yup.object().shape({
-  emailOrPhone: yup.string().required("Enter an email or phone number"),
+  emailOrPhone: yup.string().required("Enter an email"),
   newsOffers: yup.boolean(),
   firstName: yup.string().notRequired(),
   lastName: yup.string().required("Enter a last name"),
@@ -105,9 +105,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
             Complete your order by providing your payment details.
           </p>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">
-              Email or mobile phone number
-            </label>
+            <label className="block text-sm font-medium mb-1">Email</label>
             <Field
               type="text"
               name="emailOrPhone"

@@ -4,10 +4,14 @@ import { useSharedContext } from "@/components/context/sharedContext";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import OrderForm from "@/components/uicomponents/addressform";
+import { placeOrders } from "@/components/services/axios";
+import { useRouter } from "next/navigation";
 
 function Page() {
+  const router = useRouter();
   const {
     state: { products_in_cart },
+    dispatch,
   } = useSharedContext();
   let sum = products_in_cart.reduce(
     (a: any, s: any) => a + s.price * s.quantity,
@@ -17,8 +21,26 @@ function Page() {
     products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 50;
   let store = 99;
   let total = sum + store - discount;
-  const handleSubmit = (data: void) => {
-    console.log({ data, products_in_cart });
+  const handleSubmit = async (data: void) => {
+    let obj = {
+      user: data,
+      orders: [
+        {
+          status: true,
+          items: products_in_cart,
+        },
+      ],
+    };
+    let res = await placeOrders(obj);
+    if (!!res) {
+      toast.success("Order Placed!!!");
+      router.push(`/order-placed?id=${res.id}`);
+      localStorage.setItem("cart", JSON.stringify([]));
+      dispatch({
+        type: "UPDATE_CART",
+        payload: [],
+      });
+    }
   };
   return (
     <>
@@ -34,7 +56,7 @@ function Page() {
                 <div className="flex flex-col rounded-lg bg-white sm:flex-row">
                   <img
                     className="m-2 h-24 w-28 rounded-md border object-cover object-center"
-                    src={`https://images.unsplash.com/${d.photo}?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwcm9maWxlLXBhZ2V8NjZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60`}
+                    src={d.photo}
                     alt=""
                   />
                   <div className="flex w-full flex-col px-4 py-4">

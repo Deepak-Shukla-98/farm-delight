@@ -32,7 +32,7 @@ model Product {
   id         String       @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   price      Float
-  discount   Float
+  discount   Float?
   photo      String
   inventory  Int
   status     Boolean
@@ -45,6 +45,8 @@ model Order {
   user        User          @relation(fields: [userId], references: [id])
   status      Boolean
   orderItems  OrderItem[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   payment     Payment?
   shipping    Shipping?
   couponId    String?

@@ -88,7 +88,10 @@ const ProductListPage = () => {
     <div className="container mt-5">
       <div className="flex justify-between">
         <h2 className="text-2xl font-bold mb-4">Product List</h2>
-        <Link href={"/add-products"} className="px-4 underline cursor-pointer">
+        <Link
+          href={"/admin/add-products"}
+          className="px-4 underline cursor-pointer"
+        >
           Add
         </Link>
       </div>
@@ -154,10 +157,10 @@ const ProductListPage = () => {
                   {product.name}
                 </td>
                 <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  ${product.price}
+                  {product.price}
                 </td>
                 <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.discount}%
+                  {product.discount}
                 </td>
                 <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
                   {product.inventory}

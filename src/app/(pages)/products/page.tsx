@@ -1,8 +1,10 @@
 "use client";
 import { useSharedContext } from "@/components/context/sharedContext";
+import { getProducts } from "@/components/services/axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+
 interface Product {
   id: number;
   name: string;
@@ -12,61 +14,18 @@ interface Product {
   quantity?: number;
 }
 export default function Shop() {
+  const [products, setProducts] = useState<any>([]);
   const {
     state: { products_in_cart },
     dispatch,
   } = useSharedContext();
-  const products = [
-    {
-      id: 1,
-      name: "Tangy Oragne",
-      price: 250,
-      photo: "photo-1646753522408-077ef9839300",
-      quantity: 1,
-      status: true,
-    },
-    {
-      id: 2,
-      name: "Lemony lemon",
-      price: 125,
-      photo: "photo-1651950519238-15835722f8bb",
-      quantity: 1,
-      status: true,
-    },
-    {
-      id: 3,
-      name: "Sour green",
-      price: 125,
-      photo: "photo-1651950537598-373e4358d320",
-      quantity: 1,
-      status: true,
-    },
-    {
-      id: 4,
-      name: "Melon Fresh",
-      price: 250,
-      photo: "photo-1651950540805-b7c71869e689",
-      quantity: 1,
-      status: true,
-    },
-    {
-      id: 5,
-      name: "Riot Energy",
-      price: 399,
-      photo: "photo-1649261191624-ca9f79ca3fc6",
-      quantity: 1,
-      status: true,
-    },
-    {
-      id: 6,
-      name: "Riot Red",
-      price: 399,
-      photo: "photo-1649261191606-cb2496e97eee",
-      quantity: 1,
-      status: true,
-    },
-  ];
-
+  const getData = async () => {
+    let data = await getProducts({});
+    setProducts(data);
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   const handleDispatch = (data: Product) => {
     let arr = products_in_cart.filter((f: any) => f.id !== data.id);
     let product = products_in_cart.filter((f: any) => f.id === data.id);
@@ -93,21 +52,17 @@ export default function Shop() {
       icon: "😃",
     });
   };
+
   return (
     <section
       id="Projects"
       className="w-fit mx-auto grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
     >
-      {products.map((d) => (
+      {products.map((d: any) => (
         <div className="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
-          <Link
-            href={{
-              pathname: `/products/${d.id}`,
-              query: { product: JSON.stringify(d) },
-            }}
-          >
+          <Link href={`/products/${d.id}`}>
             <img
-              src={`https://images.unsplash.com/${d.photo}?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwcm9maWxlLXBhZ2V8NjZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60`}
+              src={d.photo}
               alt="Product"
               className="h-80 w-72 object-cover rounded-t-xl"
             />
