@@ -1,18 +1,18 @@
 // components/OrderForm.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
+import { getUserdetails } from "../services/axios";
 
 interface IFormInputs {
-  emailOrPhone: string;
-  newsOffers: boolean;
-  firstName?: string;
-  lastName: string;
+  email: string;
+  first_name?: string;
+  last_name: string;
   address: string;
   apartment?: string;
   city: string;
   state: string;
-  pinCode: string;
+  pincode: string;
   phone: string;
   saveInfo: boolean;
 }
@@ -20,15 +20,14 @@ interface OrderFormProps {
   handleSubmit: (data: void) => void;
 }
 const schema = yup.object().shape({
-  emailOrPhone: yup.string().required("Enter an email"),
-  newsOffers: yup.boolean(),
-  firstName: yup.string().notRequired(),
-  lastName: yup.string().required("Enter a last name"),
+  email: yup.string().required("Enter an email"),
+  first_name: yup.string().notRequired(),
+  last_name: yup.string().required("Enter a last name"),
   address: yup.string().required("Enter an address"),
   apartment: yup.string().notRequired(),
   city: yup.string().required("Enter a city"),
   state: yup.string().required("Select a state"),
-  pinCode: yup.string().required("Enter a ZIP / postal code"),
+  pincode: yup.string().required("Enter a ZIP / postal code"),
   phone: yup.string().required("Enter a phone number"),
   saveInfo: yup.boolean(),
 });
@@ -73,27 +72,32 @@ const states = [
 const OrderForm: React.FC<OrderFormProps> = ({
   handleSubmit = () => {},
 }: any) => {
-  const initialValues: IFormInputs = {
-    emailOrPhone: "",
-    newsOffers: false,
-    firstName: "",
-    lastName: "",
+  const [data, setData] = useState({
+    email: "",
+    first_name: "",
+    last_name: "",
     address: "",
     apartment: "",
     city: "",
     state: "",
-    pinCode: "",
+    pincode: "",
     phone: "",
     saveInfo: false,
+  });
+  const getData = async () => {
+    let res = await getUserdetails({});
+    if (!!res) setData((d) => ({ ...d, ...res }));
   };
-
+  useEffect(() => {
+    getData();
+  }, []);
   const onSubmit = (values: IFormInputs) => {
     handleSubmit(values);
   };
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={data}
       enableReinitialize
       validationSchema={schema}
       onSubmit={onSubmit}
@@ -108,30 +112,15 @@ const OrderForm: React.FC<OrderFormProps> = ({
             <label className="block text-sm font-medium mb-1">Email</label>
             <Field
               type="text"
-              name="emailOrPhone"
+              name="email"
               className="w-full border border-gray-300 p-2 rounded-md"
             />
             <ErrorMessage
-              name="emailOrPhone"
+              name="email"
               component="small"
               className="text-red-500 text-xs mt-1"
             />
           </div>
-
-          {/* <div className="mb-4">
-            <Field
-              type="checkbox"
-              name="newsOffers"
-              className="mr-2"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              checked={values.newsOffers}
-            />
-            <label className="text-sm font-medium">
-              Email me with news and offers
-            </label>
-          </div> */}
-
           <h2 className="text-lg font-semibold mb-4">Delivery</h2>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">
@@ -150,7 +139,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
               </label>
               <Field
                 type="text"
-                name="firstName"
+                name="first_name"
                 className="w-full border border-gray-300 p-2 rounded-md"
               />
             </div>
@@ -160,11 +149,11 @@ const OrderForm: React.FC<OrderFormProps> = ({
               </label>
               <Field
                 type="text"
-                name="lastName"
+                name="last_name"
                 className="w-full border border-gray-300 p-2 rounded-md"
               />
               <ErrorMessage
-                name="lastName"
+                name="last_name"
                 component="small"
                 className="text-red-500 text-xs mt-1"
               />
@@ -235,11 +224,11 @@ const OrderForm: React.FC<OrderFormProps> = ({
               <label className="block text-sm font-medium mb-1">PIN code</label>
               <Field
                 type="text"
-                name="pinCode"
+                name="pincode"
                 className="w-full border border-gray-300 p-2 rounded-md"
               />
               <ErrorMessage
-                name="pinCode"
+                name="pincode"
                 component="small"
                 className="text-red-500 text-xs mt-1"
               />

@@ -84,3 +84,22 @@ export const getAdminOrders = async (payload: any) => {
     })
   );
 };
+export const contactMail = async (payload: any) => {
+  return await ServiceHandler(
+    axios.post(`/contact-form/`, payload, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+        "Content-Type": "multipart/form-data",
+      },
+    })
+  );
+};
+export const getUserdetails = async (payload: any) => {
+  return await ServiceHandler(
+    axios.get(`/user-details/`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+  );
+};
