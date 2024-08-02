@@ -16,15 +16,23 @@ interface Product {
 export default function Shop() {
   const [products, setProducts] = useState<any>([]);
   const {
-    state: { products_in_cart },
+    state: { products_in_cart, allproducts },
     dispatch,
   } = useSharedContext();
   const getData = async () => {
     let data = await getProducts({});
+    dispatch({
+      type: "SET_ALL_PRODUCTS",
+      payload: data,
+    });
     setProducts(data);
   };
   useEffect(() => {
-    getData();
+    if (!!allproducts.length) {
+      setProducts(allproducts);
+    } else {
+      getData();
+    }
   }, []);
   const handleDispatch = (data: Product) => {
     let arr = products_in_cart.filter((f: any) => f.id !== data.id);
@@ -52,7 +60,6 @@ export default function Shop() {
       icon: "😃",
     });
   };
-
   return (
     <section
       id="Projects"

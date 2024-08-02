@@ -20,6 +20,7 @@ const admin =
     : false;
 const initialState = {
   user: {},
+  allproducts: [],
   products_in_cart: !!arr ? arr : [],
   isAuthenticated: token_avbl,
   isAdmin: admin,
@@ -45,6 +46,11 @@ const SharedReducer = (state, action) => {
       return {
         ...state,
         products_in_cart: action.payload,
+      };
+    case "SET_ALL_PRODUCTS":
+      return {
+        ...state,
+        allproducts: action.payload,
       };
   }
 };
