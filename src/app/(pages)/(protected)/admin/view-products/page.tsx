@@ -64,7 +64,6 @@ const ProductListPage = () => {
     setIsModalOpen(true);
   };
   const handleUpdate = async (values: any) => {
-    console.log({ values });
     const formData = new FormData();
     formData.append("id", values.id);
     formData.append("name", values.name);

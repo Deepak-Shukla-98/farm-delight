@@ -46,7 +46,6 @@ const Page = () => {
     values: IFormInputs,
     { setSubmitting }: FormikHelpers<IFormInputs>
   ) => {
-    console.log({ values });
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("price", values.price.toString());

@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
             <p>Message: ${message} </p>
             `,
     });
-    console.log({ mail });
     return NextResponse.json({ message: "Success: email was sent" });
   } catch (error) {
     console.log(error);

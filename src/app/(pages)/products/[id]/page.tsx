@@ -17,16 +17,9 @@ export default function Products() {
     status: null,
   });
   const [in_cart, set_in_cart] = useState(false);
-  const [products, setProducts] = useState<any>([]);
-  const getData = async () => {
-    let data = await getProducts({});
-    setProducts(data);
-  };
-  useEffect(() => {
-    getData();
-  }, []);
+
   const {
-    state: { products_in_cart },
+    state: { products_in_cart, allproducts },
     dispatch,
   } = useSharedContext();
   useEffect(() => {
@@ -37,11 +30,10 @@ export default function Products() {
       setData(arr?.[0]);
     } else {
       set_in_cart(false);
-      const [data] = products.filter((f: any) => f.id === id);
-      console.log({ data });
+      const [data] = allproducts.filter((f: any) => f.id === id);
       setData({ ...data, quantity: 0 });
     }
-  }, [products_in_cart.length, products]);
+  }, [products_in_cart.length, allproducts]);
 
   const handleDispatch = (data: any) => {
     let arr = products_in_cart.filter((f: any) => f.id !== data.id);
