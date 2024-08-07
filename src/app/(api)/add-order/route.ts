@@ -2,6 +2,7 @@ import { apiMiddleware } from "@/components/utils/apimiddleware";
 import { sendMail } from "@/components/utils/mailer";
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import axios from "axios";
 
 const prisma = new PrismaClient();
 
@@ -83,7 +84,6 @@ export async function POST(request: NextRequest) {
         status: 401,
       });
     }
-
     const { user, orders } = await request.json();
     if (!user || !orders || !Array.isArray(orders) || orders.length === 0) {
       return new NextResponse(JSON.stringify({ error: "Invalid input" }), {
@@ -123,11 +123,36 @@ export async function POST(request: NextRequest) {
           },
         })
       );
-      let [{ id: orderid }] = await Promise.all(orderPromises);
+      let [{ id: orderId }] = await Promise.all(orderPromises);
+      // Get Shiprocket token
+      const token = await getShiprocketToken();
+      // Create shipment with Shiprocket
+      const shippingResponse = await createShiprocketShipment(
+        token,
+        { id: orderId, items: orders.flatMap((order) => order.items) },
+        updatedUser
+      );
+      // Save the shipping response
+      await prisma.shipping.create({
+        data: {
+          orderId: orderId,
+          address: user.address,
+          city: user.city,
+          state: user.state,
+          pinCode: user.pincode,
+          status: shippingResponse.status,
+          shippedAt: shippingResponse.shipped_at
+            ? new Date(shippingResponse.shipped_at)
+            : null,
+          deliveredAt: shippingResponse.delivered_at
+            ? new Date(shippingResponse.delivered_at)
+            : null,
+        },
+      });
       name = `${updatedUser.first_name} ${updatedUser.last_name}`;
-      return orderid;
+      return orderId;
     });
-    const mail = await sendMail({
+    await sendMail({
       to: user.email,
       subject: "Order Placed",
       content: htmlTemplate(name, transaction),
@@ -212,3 +237,63 @@ const htmlTemplate = (name: any, id: any) => {
           </body>
           </html>`;
 };
+
+async function getShiprocketToken() {
+  const response = await axios.post(
+    "https://apiv2.shiprocket.in/v1/external/auth/login",
+    {
+      email: "your-email@example.com",
+      password: "your-password",
+    }
+  );
+  return response.data.token;
+}
+
+async function createShiprocketShipment(token: string, order: any, user: any) {
+  const response = await axios.post(
+    "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
+    {
+      order_id: order.id,
+      order_date: new Date().toISOString(),
+      pickup_location: "Primary",
+      channel_id: "", // Leave empty if not applicable
+      comment: "Order for shipment",
+      billing_customer_name: user.first_name,
+      billing_last_name: user.last_name,
+      billing_address: user.address,
+      billing_city: user.city,
+      billing_pincode: user.pincode,
+      billing_state: user.state,
+      billing_country: "India",
+      billing_email: user.email,
+      billing_phone: user.phone,
+      shipping_is_billing: true,
+      order_items: order.items.map((item: any) => ({
+        name: item.name,
+        sku: item.productId,
+        units: item.quantity,
+        selling_price: item.price,
+        discount: item.discount || 0,
+        tax: "",
+        hsn: "",
+      })),
+      payment_method: "Prepaid",
+      sub_total: order.items.reduce(
+        (acc: number, item: any) => acc + item.price * item.quantity,
+        0
+      ),
+      length: 10,
+      breadth: 10,
+      height: 10,
+      weight: 1.0,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}

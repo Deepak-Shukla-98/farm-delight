@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { transporter, sendMail } from "@/components/utils/mailer";
 
 export async function POST(request: NextRequest) {
-  const myEmail = process.env.NEXT_PUBLIC_PERSONAL_EMAIL;
+  const myEmail = process.env.PERSONAL_EMAIL;
   const formData = await request.formData();
   const email = formData.get("email");
   const subject = formData.get("subject");

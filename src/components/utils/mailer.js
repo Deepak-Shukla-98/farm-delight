@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
-const mail = process.env.NEXT_PUBLIC_PERSONAL_EMAIL;
-const password = process.env.NEXT_PUBLIC_BURNER_PASSWORD;
+const mail = process.env.PERSONAL_EMAIL;
+const password = process.env.BURNER_PASSWORD;
 
 export const transporter = nodemailer.createTransport({
   host: "smtp-mail.outlook.com",
