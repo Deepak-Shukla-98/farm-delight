@@ -126,30 +126,30 @@ export async function POST(request: NextRequest) {
       );
       let [{ id: orderId }] = await Promise.all(orderPromises);
       // Get Shiprocket token
-      const token = await getShiprocketToken();
-      // Create shipment with Shiprocket
-      const shippingResponse = await createShiprocketShipment(
-        token,
-        { id: orderId, items: orders.flatMap((order) => order.items) },
-        updatedUser
-      );
-      // Save the shipping response
-      await prisma.shipping.create({
-        data: {
-          orderId: orderId,
-          address: user.address,
-          city: user.city,
-          state: user.state,
-          pinCode: user.pincode,
-          status: shippingResponse.status,
-          shippedAt: shippingResponse.shipped_at
-            ? new Date(shippingResponse.shipped_at)
-            : null,
-          deliveredAt: shippingResponse.delivered_at
-            ? new Date(shippingResponse.delivered_at)
-            : null,
-        },
-      });
+      // const token = await getShiprocketToken();
+      // // Create shipment with Shiprocket
+      // const shippingResponse = await createShiprocketShipment(
+      //   token,
+      //   { id: orderId, items: orders.flatMap((order) => order.items) },
+      //   updatedUser
+      // );
+      // // Save the shipping response
+      // await prisma.shipping.create({
+      //   data: {
+      //     orderId: orderId,
+      //     address: user.address,
+      //     city: user.city,
+      //     state: user.state,
+      //     pinCode: user.pincode,
+      //     status: shippingResponse.status,
+      //     shippedAt: shippingResponse.shipped_at
+      //       ? new Date(shippingResponse.shipped_at)
+      //       : null,
+      //     deliveredAt: shippingResponse.delivered_at
+      //       ? new Date(shippingResponse.delivered_at)
+      //       : null,
+      //   },
+      // });
       name = `${updatedUser.first_name} ${updatedUser.last_name}`;
       return orderId;
     });
