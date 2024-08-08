@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { FaRegEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa6";
-
+import DataTable from "react-data-table-component";
 import * as yup from "yup";
 import {
   deleteProduct,
@@ -79,14 +79,64 @@ const ProductListPage = () => {
     fetchProducts();
   };
   const handleDelete = async (data: any) => {
-    await deleteProduct(data);
-    setIsModalOpen(false);
-    fetchProducts();
+    if (confirm("Are you sure") == true) {
+      await deleteProduct(data);
+      setIsModalOpen(false);
+      fetchProducts();
+    }
   };
+  const columns = [
+    {
+      name: "Product Name",
+      selector: (row: any) => row.name,
+      sortable: true,
+    },
+    {
+      name: "Price",
+      selector: (row: any) => row.price,
+      sortable: true,
+    },
+    {
+      name: "Discount",
+      selector: (row: any) => row.discount,
+      sortable: true,
+    },
+    {
+      name: "Inventory",
+      selector: (row: any) => row.inventory,
+      sortable: true,
+    },
+    {
+      name: "Status",
+      selector: (row: any) => (row.status ? "In Stock" : "Out Of Stock"),
+      sortable: true,
+    },
+    {
+      name: "Actions",
+      cell: (row: any) => (
+        <div className="flex justify-around">
+          <FaRegEdit
+            onClick={() => handleEdit(row)}
+            size={20}
+            color="blue"
+            className="cursor-pointer"
+          />
+          <FaTrash
+            onClick={() => handleDelete(row)}
+            size={20}
+            color="red"
+            className="cursor-pointer mx-4"
+          />
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
+  ];
   return (
     <div className="container mt-5">
-      <div className="flex justify-between">
-        <h2 className="text-2xl font-bold mb-4">Product List</h2>
+      <div className="flex justify-end">
         <Link
           href={"/admin/add-products"}
           className="px-4 underline cursor-pointer"
@@ -95,99 +145,12 @@ const ProductListPage = () => {
         </Link>
       </div>
 
-      <div className="w-full overflow-x-auto">
-        <table className="w-full text-left border border-separate rounded border-slate-200">
-          <thead>
-            <tr>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium text-center border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                No
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                Product Name
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                Price
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                Discount
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                Inventory
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                Status
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product: any, index: number) => (
-              <tr key={product.id}>
-                <th
-                  scope="row"
-                  className="h-12 px-6 text-sm text-center transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 "
-                >
-                  {index + 1}
-                </th>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.name}
-                </td>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.price}
-                </td>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.discount}
-                </td>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.inventory}
-                </td>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.status ? "In Stock" : "Out Of Stock"}
-                </td>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  <div className="flex justify-around">
-                    <FaRegEdit
-                      onClick={() => handleEdit(product)}
-                      size={20}
-                      color="blue"
-                      className="cursor-pointer"
-                    />
-                    <FaTrash
-                      onClick={() => handleDelete(product)}
-                      size={20}
-                      color="red"
-                      className="cursor-pointer"
-                    />
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        title="Products"
+        columns={columns}
+        data={products}
+        pagination
+      />
       <Modal
         isOpen={isModalOpen}
         onOpenChange={() => setIsModalOpen(false)}

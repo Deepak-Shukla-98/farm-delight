@@ -8,7 +8,9 @@ export async function GET(request: NextRequest) {
   try {
     const { id } = (await apiMiddleware(request)) as { id: string };
     if (!!id) {
-      const orders = await prisma.order.findMany();
+      const orders = await prisma.order.findMany({
+        include: { orderItems: true },
+      });
       if (!orders) {
         return new Response(JSON.stringify({ error: "No Orders" }), {
           headers: {
@@ -17,7 +19,7 @@ export async function GET(request: NextRequest) {
           status: 404, // Not Found
         });
       }
-      return new Response(JSON.stringify(orders), {
+      return new Response(JSON.stringify(orders.reverse()), {
         headers: {
           "Content-type": "application/json",
         },
@@ -45,7 +47,7 @@ export async function POST(request: NextRequest) {
     const { id } = (await apiMiddleware(request)) as { id: string };
     if (!!id) {
       const data = await request.json();
-      const product = await prisma.product.create({ data });
+      const product = await prisma.order.create({ data });
       return new Response(JSON.stringify(product), {
         headers: {
           "Content-type": "application/json",
@@ -72,20 +74,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const { id } = (await apiMiddleware(request)) as { id: string };
-    if (!!id) {
-      const data = await request.json();
-      const { id: productId, ...updateData } = data;
-      const product = await prisma.product.update({
-        where: { id: productId },
-        data: updateData,
-      });
-      return new Response(JSON.stringify(product), {
-        headers: {
-          "Content-type": "application/json",
-        },
-        status: 200, // OK
-      });
-    } else {
+    if (!id) {
       return new Response(JSON.stringify({ error: "Not Authorised" }), {
         headers: {
           "Content-type": "application/json",
@@ -93,7 +82,20 @@ export async function PUT(request: NextRequest) {
         status: 401, // Unauthorized
       });
     }
+    const data = await request.json();
+    const { id: orderId, ...updateData } = data;
+    const order = await prisma.order.update({
+      where: { id: orderId },
+      data: updateData,
+    });
+    return new Response(JSON.stringify(order), {
+      headers: {
+        "Content-type": "application/json",
+      },
+      status: 200, // OK
+    });
   } catch (error) {
+    console.log({ error });
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       headers: {
         "Content-type": "application/json",
@@ -106,9 +108,9 @@ export async function DELETE(request: NextRequest) {
   try {
     const { id } = (await apiMiddleware(request)) as { id: string };
     if (!!id) {
-      const { productId } = await request.json();
-      const product = await prisma.product.delete({
-        where: { id: productId },
+      const { orderId } = await request.json();
+      const product = await prisma.order.delete({
+        where: { id: orderId },
       });
       return new Response(JSON.stringify(product), {
         headers: {

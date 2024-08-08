@@ -5,9 +5,9 @@ import { FaRegEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa6";
 import * as yup from "yup";
 import {
-  deleteProduct,
+  deleteAdminOrders,
   getAdminOrders,
-  updateProducts,
+  updateAdminOrders,
 } from "@/components/services/axios";
 import {
   Modal,
@@ -16,279 +16,116 @@ import {
   ModalBody,
   ModalFooter,
 } from "@nextui-org/modal";
-import Link from "next/link";
+import DataTable, { ExpanderComponentProps } from "react-data-table-component";
+import { motion } from "framer-motion";
 
 const schema = yup.object().shape({
-  name: yup.string().required("Enter product name"),
-  price: yup
-    .number()
-    .required("Enter product price")
-    .positive("Price must be positive"),
-  discount: yup
-    .number()
-    .required("Enter discount")
-    .min(0, "Discount cannot be negative")
-    .max(100, "Discount cannot be more than 100"),
-  inventory: yup
-    .number()
-    .required("Enter inventory quantity")
-    .min(0, "Inventory cannot be negative"),
   status: yup.string().required("Select status"),
 });
 
 const OrdersListPage = () => {
-  const [products, setProducts] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState({
-    id: null,
-    name: null,
-    price: null,
-    discount: null,
-    photo: null,
-    inventory: null,
-    status: null,
-  });
-  const fetchProducts = async () => {
+  const [orders, setOrders] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState({});
+  const fetchOrders = async () => {
     const response = await getAdminOrders({});
-    setProducts(response);
+    setOrders(response);
   };
   useEffect(() => {
-    fetchProducts();
+    fetchOrders();
   }, []);
   const handleEdit = (product: any) => {
-    setSelectedProduct({
-      ...product,
-      status: !!product.status ? "in_stock" : "out_of_stock",
-    });
-    setIsModalOpen(true);
+    setSelected(product);
+    setIsOpen(true);
   };
   const handleUpdate = async (values: any) => {
-    const formData = new FormData();
-    formData.append("id", values.id);
-    formData.append("name", values.name);
-    formData.append("price", values.price.toString());
-    formData.append("discount", values.discount.toString());
-    if (values.photo instanceof File) {
-      formData.append("photo", values.photo);
-    }
-    formData.append("inventory", values.inventory.toString());
-    formData.append("status", values.status);
-    await updateProducts(formData);
-    setIsModalOpen(false);
-    fetchProducts();
+    let { orderItems, ...rest } = values;
+    await updateAdminOrders(rest);
+    setIsOpen(false);
+    fetchOrders();
   };
   const handleDelete = async (data: any) => {
-    await deleteProduct(data);
-    setIsModalOpen(false);
-    fetchProducts();
+    if (confirm("Are you sure") == true) {
+      await deleteAdminOrders(data);
+      setIsOpen(false);
+      fetchOrders();
+    }
   };
+  const columns = [
+    {
+      name: "ID",
+      selector: (row: any) => row.id,
+      sortable: true,
+    },
+    {
+      name: "USER ID",
+      selector: (row: any) => row.userId,
+      sortable: true,
+    },
+    {
+      name: "CREATED AT",
+      selector: (row: any) => new Date(row.createdAt).toLocaleString(),
+      sortable: true,
+    },
+    {
+      name: "STATUS",
+      selector: (row: any) => row.status,
+      sortable: true,
+    },
+    {
+      name: "UPDATED AT",
+      selector: (row: any) => new Date(row.updatedAt).toLocaleString(),
+      sortable: true,
+    },
+    {
+      name: "COUPON ID",
+      selector: (row: any) => row.couponId || "N/A",
+      sortable: true,
+    },
+    {
+      name: "Action",
+      selector: (row: any) => (
+        <div className="flex justify-around">
+          <FaRegEdit
+            onClick={() => handleEdit(row)}
+            size={20}
+            color="blue"
+            className="cursor-pointer"
+          />
+          <FaTrash
+            onClick={() => handleDelete(row)}
+            size={20}
+            color="red"
+            className="cursor-pointer mx-4"
+          />
+        </div>
+      ),
+      sortable: true,
+    },
+  ];
   return (
     <div className="container mt-5">
-      <div className="flex justify-between">
-        <h2 className="text-2xl font-bold mb-4">Product List</h2>
-        <Link
-          href={"/admin/add-products"}
-          className="px-4 underline cursor-pointer"
-        >
-          Add
-        </Link>
-      </div>
-
-      <div className="w-full overflow-x-auto">
-        <table className="w-full text-left border border-separate rounded border-slate-200">
-          <thead>
-            <tr>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                ID
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                User ID
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                createdAt
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                Status
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                updatedAt
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                couponId
-              </th>
-              <th
-                scope="col"
-                className="h-12 px-6 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100"
-              >
-                action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product: any, index: number) => (
-              <tr key={product.id}>
-                <th
-                  scope="row"
-                  className="h-12 px-6 text-sm text-center transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 "
-                >
-                  {product.id}
-                </th>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.userId}
-                </td>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.createdAt}
-                </td>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.status}
-                </td>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.updatedAt}
-                </td>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.couponId}
-                </td>
-                <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  <div className="flex justify-around">
-                    <FaRegEdit
-                      onClick={() => handleEdit(product)}
-                      size={20}
-                      color="blue"
-                      className="cursor-pointer"
-                    />
-                    <FaTrash
-                      onClick={() => handleDelete(product)}
-                      size={20}
-                      color="red"
-                      className="cursor-pointer"
-                    />
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <Modal
-        isOpen={isModalOpen}
-        onOpenChange={() => setIsModalOpen(false)}
-        style={{ marginTop: "200px" }}
-      >
+      <DataTable
+        title="Orders"
+        columns={columns}
+        data={orders}
+        expandableRows
+        expandableRowsComponent={ExpandableComponent}
+        pagination
+      />
+      <Modal isOpen={isOpen} onOpenChange={() => setIsOpen(false)}>
         <ModalContent>
           <ModalHeader>
             <h5>Edit Product</h5>
           </ModalHeader>
           <ModalBody>
             <Formik
-              initialValues={selectedProduct}
+              initialValues={selected}
               validationSchema={schema}
               onSubmit={handleUpdate}
             >
               {({ setFieldValue }) => (
                 <Form>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Name
-                    </label>
-                    <Field
-                      type="text"
-                      name="name"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Price
-                    </label>
-                    <Field
-                      type="number"
-                      name="price"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    />
-                    <ErrorMessage
-                      name="price"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Discount
-                    </label>
-                    <Field
-                      type="number"
-                      name="discount"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    />
-                    <ErrorMessage
-                      name="discount"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Photo
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) => {
-                        if (event.currentTarget.files) {
-                          setFieldValue("photo", event.currentTarget.files[0]);
-                        }
-                      }}
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    />
-                    <ErrorMessage
-                      name="photo"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Inventory
-                    </label>
-                    <Field
-                      type="number"
-                      name="inventory"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    />
-                    <ErrorMessage
-                      name="inventory"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
-                  </div>
-
                   <div className="mb-4">
                     <label className="block text-sm font-medium mb-1">
                       Status
@@ -299,8 +136,11 @@ const OrdersListPage = () => {
                       className="w-full border border-gray-300 p-2 rounded-md"
                     >
                       <option value="" label="Select status" />
-                      <option value={"in_stock"} label="In Stock" />
-                      <option value={"out_of_stock"} label="Out Of Stock" />
+                      <option value="PENDING" label="Pending" />
+                      <option value="SHIPPED" label="Shipped" />
+                      <option value="DELIVERED" label="Delivered" />
+                      <option value="CANCELLED" label="Cancelled" />
+                      <option value="RETURNED" label="Returned" />
                     </Field>
                     <ErrorMessage
                       name="status"
@@ -327,3 +167,62 @@ const OrdersListPage = () => {
 };
 
 export default OrdersListPage;
+
+const ExpandableComponent: React.FC<ExpanderComponentProps<any>> = ({
+  data,
+}) => (
+  <motion.div
+    initial={{ opacity: 0, height: 0, padding: 0 }}
+    animate={{ opacity: 1, height: "auto", padding: "4px" }}
+    exit={{ opacity: 0, height: 0, padding: 0 }}
+    transition={{ duration: 0.2 }}
+  >
+    <div className="p-2 bg-gray-50">
+      <h4 className="mb-2 font-bold">Order Items:</h4>
+      {data.orderItems.map((f: any) => (
+        <div className="w-full px-3 min-[400px]:px-6">
+          <div className="flex flex-col lg:flex-row items-center py-6 border-b border-gray-200 gap-6 w-full">
+            <div className="img-box max-lg:w-full">
+              <img
+                src={f.photo}
+                alt="Premium Watch image"
+                className="aspect-square w-full lg:max-w-[140px] rounded-xl"
+              />
+            </div>
+            <div className="flex flex-row items-center w-full ">
+              <div className="grid grid-cols-1 lg:grid-cols-2 w-full">
+                <div className="flex items-center">
+                  <div className="">
+                    <h2 className="font-semibold text-xl leading-8 text-black mb-3">
+                      {f.name}
+                    </h2>
+                    <div className="flex items-center ">
+                      <p className="font-medium text-base leading-7 text-black pr-4 mr-4 border-r border-gray-200">
+                        Size: <span className="text-gray-500">100 ml</span>
+                      </p>
+                      <p className="font-medium text-base leading-7 text-black ">
+                        Qty: <span className="text-gray-500">{f.quantity}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-5">
+                  <div className="col-span-5 lg:col-span-1 flex items-center max-lg:mt-3">
+                    <div className="flex gap-3 lg:block">
+                      <p className="font-medium text-sm leading-7 text-black">
+                        Price
+                      </p>
+                      <p className="lg:mt-4 font-medium text-sm leading-7 text-indigo-600">
+                        ${f.price}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </motion.div>
+);

@@ -84,6 +84,25 @@ export const getAdminOrders = async (payload: any) => {
     })
   );
 };
+export const updateAdminOrders = async (payload: any) => {
+  return await ServiceHandler(
+    axios.put(`/orders/`, payload, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+  );
+};
+export const deleteAdminOrders = async (payload: any) => {
+  return await ServiceHandler(
+    axios.delete(`/orders/`, {
+      params: payload,
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+  );
+};
 export const contactMail = async (payload: any) => {
   return await ServiceHandler(
     axios.post(`/contact-form/`, payload, {
