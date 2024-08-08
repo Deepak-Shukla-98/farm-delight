@@ -58,15 +58,15 @@ export function isAdmin(Component: any) {
           payload: true,
         });
       } else {
-        // if (!isAuthenticated || !isAdmin) {
-        //   return redirect("/products");
-        // }
+        if (!isAuthenticated || !isAdmin) {
+          return redirect("/products");
+        }
       }
     }, [pathname]);
 
-    // if (!isAuthenticated || !isAdmin) {
-    //   return null;
-    // }
+    if (!isAuthenticated || !isAdmin) {
+      return null;
+    }
 
     return <Component {...props} />;
   };

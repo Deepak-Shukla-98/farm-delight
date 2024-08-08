@@ -24,10 +24,6 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   if (!isMounted) {
     return null;
   }
-  return (
-    <div>
-      <div>{children}</div>
-    </div>
-  );
+  return <div>{children}</div>;
 }
 export default isAdmin(HomeLayout);

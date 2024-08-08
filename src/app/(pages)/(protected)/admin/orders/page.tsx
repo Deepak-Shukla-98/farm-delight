@@ -186,7 +186,7 @@ const ExpandableComponent: React.FC<ExpanderComponentProps<any>> = ({
               <img
                 src={f.photo}
                 alt="Premium Watch image"
-                className="aspect-square w-full lg:max-w-[140px] rounded-xl"
+                className="aspect-square max-w-[140px] rounded-xl"
               />
             </div>
             <div className="flex flex-row items-center w-full ">

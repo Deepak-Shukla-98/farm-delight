@@ -37,7 +37,7 @@ const Header = () => {
       payload: {},
     });
     localStorage.clear();
-    router.push("/signin");
+    router.push("/");
   };
 
   return (
