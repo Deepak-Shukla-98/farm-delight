@@ -65,6 +65,7 @@ export async function GET(request: NextRequest) {
       });
     }
   } catch (error) {
+    console.log({ error });
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       headers: {
         "Content-type": "application/json",

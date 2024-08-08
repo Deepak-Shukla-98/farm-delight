@@ -158,7 +158,7 @@ const OrdersListPage = () => {
                   {product.createdAt}
                 </td>
                 <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
-                  {product.status ? "Active" : "Delivered"}
+                  {product.status}
                 </td>
                 <td className="h-12 px-6 text-sm transition duration-300 border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-500 ">
                   {product.updatedAt}

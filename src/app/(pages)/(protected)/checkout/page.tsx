@@ -26,7 +26,7 @@ function Page() {
       user: data,
       orders: [
         {
-          status: true,
+          status: "PENDING",
           items: products_in_cart,
         },
       ],
