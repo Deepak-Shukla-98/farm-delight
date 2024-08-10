@@ -2,9 +2,12 @@ import { apiMiddleware } from "@/components/utils/apimiddleware";
 import { sendMail } from "@/components/utils/mailer";
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import Razorpay from "razorpay";
 import axios from "axios";
 
 const prisma = new PrismaClient();
+const key_id = process.env.RAZORPAY_KEY;
+const key_secret = process.env.RAZORPAY_SECRET;
 
 export async function GET(request: NextRequest) {
   try {
@@ -92,7 +95,23 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
     }
-    let name;
+    const total = orders.reduce((totalAmount: number, order: any) => {
+      const orderTotal = order.items.reduce(
+        (sum: number, item: any) => sum + item.price * item.quantity,
+        0
+      );
+      return totalAmount + orderTotal;
+    }, 0);
+    // Create Razorpay order
+    const razorpay = new Razorpay({
+      key_id: key_id as string,
+      key_secret: key_secret as string,
+    });
+    const { id: razorpayId } = await razorpay.orders.create({
+      amount: total,
+      currency: "INR",
+      receipt: id,
+    });
     const transaction = await prisma.$transaction(async (prisma) => {
       const updatedUser = await prisma.user.update({
         where: { id: id },
@@ -124,10 +143,19 @@ export async function POST(request: NextRequest) {
           },
         })
       );
-      let [{ id: orderId }] = await Promise.all(orderPromises);
-      // Get Shiprocket token
-      // const token = await getShiprocketToken();
+      const [{ id: orderId }] = await Promise.all(orderPromises);
+      // Store payment information in the database
+      await prisma.payment.create({
+        data: {
+          orderId: orderId,
+          method: "PREPAID",
+          amount: total,
+          status: "PENDING", // Payment was successfully captured
+          date: new Date(),
+        },
+      });
       // // Create shipment with Shiprocket
+      // const token = await getShiprocketToken();
       // const shippingResponse = await createShiprocketShipment(
       //   token,
       //   { id: orderId, items: orders.flatMap((order) => order.items) },
@@ -150,19 +178,29 @@ export async function POST(request: NextRequest) {
       //       : null,
       //   },
       // });
-      name = `${updatedUser.first_name} ${updatedUser.last_name}`;
-      return orderId;
+      const name = `${updatedUser.first_name} ${updatedUser.last_name}`;
+      return { orderId, name };
     });
+    // Send order confirmation email
     await sendMail({
       to: user.email,
       subject: "Order Placed",
-      content: htmlTemplate(name, transaction),
+      content: htmlTemplate(transaction.name, transaction.orderId),
     });
-    return new NextResponse(JSON.stringify({ id: transaction }), {
-      headers: { "Content-Type": "application/json" },
-      status: 201,
-    });
+    return new NextResponse(
+      JSON.stringify({
+        ...user,
+        id: transaction.orderId,
+        orderId: razorpayId,
+        amount: total,
+      }),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 201,
+      }
+    );
   } catch (error) {
+    console.log({ error });
     return new NextResponse(
       JSON.stringify({ error: "Internal Server Error" }),
       {

@@ -13,15 +13,35 @@ function Page() {
     state: { products_in_cart },
     dispatch,
   } = useSharedContext();
-  let sum = products_in_cart.reduce(
-    (a: any, s: any) => a + s.price * s.quantity,
-    0
-  );
-  let discount =
-    products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 50;
+  let sum = products_in_cart.reduce((a, s) => a + s.price * s.quantity, 0);
+  let discount = products_in_cart.reduce((a, s) => a + s.quantity, 0) * 50;
   let store = 99;
   let total = sum + store - discount;
-  const handleSubmit = async (data: void) => {
+
+  const initializeRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleSubmit = async (data) => {
+    const res = await initializeRazorpay();
+
+    if (!res) {
+      alert("Razorpay SDK Failed to load");
+      return;
+    }
+
     let obj = {
       user: data,
       orders: [
@@ -31,15 +51,63 @@ function Page() {
         },
       ],
     };
-    let res = await placeOrders(obj);
-    if (!!res) {
-      toast.success("Order Placed!!!");
-      router.push(`/order-placed?id=${res.id}`);
-      localStorage.setItem("cart", JSON.stringify([]));
-      dispatch({
-        type: "UPDATE_CART",
-        payload: [],
-      });
+
+    try {
+      let res = await placeOrders(obj);
+      console.log("Order Response:", res); // Debug: Check server response
+
+      if (res) {
+        const options = {
+          key: process.env.RAZORPAY_KEY, // Replace with your Razorpay Key ID
+          amount: res.amount, // Amount in currency subunits
+          currency: "INR",
+          name: "Your Business Name",
+          description: "Order Payment",
+          image: "https://example.com/your_logo",
+          order_id: res.orderId, // Order ID returned from the server
+          handler: async function (response) {
+            console.log("Payment Response:", response); // Debug: Check payment response
+            try {
+              // Verify the payment on the server
+              // await verifyPayment(response);
+              toast.success("Payment Successful!");
+              router.push(`/order-placed?id=${res.id}`);
+              localStorage.setItem("cart", JSON.stringify([]));
+              dispatch({
+                type: "UPDATE_CART",
+                payload: [],
+              });
+            } catch (error) {
+              toast.error("Payment verification failed!");
+              console.error("Payment Verification Error:", error); // Debug: Check verification error
+            }
+          },
+          prefill: {
+            name: res.name,
+            email: res.email,
+            contact: res.phone,
+          },
+          notes: {
+            address: res.address,
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        if (window.Razorpay) {
+          const paymentObject = new window.Razorpay(options);
+          paymentObject.on("payment.failed", function (response) {
+            toast.error("Payment Failed!");
+            console.error("Payment Failure Response:", response.error); // Debug: Check payment failure
+          });
+          paymentObject.open();
+        } else {
+          toast.error("Razorpay script not loaded.");
+        }
+      }
+    } catch (error) {
+      console.error("Place Orders Error:", error); // Debug: Check place orders error
     }
   };
   return (
@@ -52,7 +120,7 @@ function Page() {
           </p>
           {products_in_cart.length ? (
             <div className="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-              {products_in_cart.map((d: any) => (
+              {products_in_cart.map((d) => (
                 <div className="flex flex-col rounded-lg bg-white sm:flex-row">
                   <img
                     className="m-2 h-24 w-28 rounded-md border object-cover object-center"
