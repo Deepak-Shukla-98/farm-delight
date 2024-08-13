@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/uicomponents/spinner.tsx", "src/app/(api)/user-details/route.js", "src/app/(pages)/(protected)/checkout/page.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/uicomponents/spinner.tsx", "src/app/(api)/user-details/route.js", "src/app/(pages)/(protected)/checkout/page.tsx"],
   "exclude": ["node_modules"]
 }

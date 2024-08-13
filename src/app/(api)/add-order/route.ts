@@ -154,30 +154,33 @@ export async function POST(request: NextRequest) {
           date: new Date(),
         },
       });
-      // // Create shipment with Shiprocket
-      // const token = await getShiprocketToken();
-      // const shippingResponse = await createShiprocketShipment(
-      //   token,
-      //   { id: orderId, items: orders.flatMap((order) => order.items) },
-      //   updatedUser
-      // );
-      // // Save the shipping response
-      // await prisma.shipping.create({
-      //   data: {
-      //     orderId: orderId,
-      //     address: user.address,
-      //     city: user.city,
-      //     state: user.state,
-      //     pinCode: user.pincode,
-      //     status: shippingResponse.status,
-      //     shippedAt: shippingResponse.shipped_at
-      //       ? new Date(shippingResponse.shipped_at)
-      //       : null,
-      //     deliveredAt: shippingResponse.delivered_at
-      //       ? new Date(shippingResponse.delivered_at)
-      //       : null,
-      //   },
-      // });
+      // Create shipment with Shiprocket
+      let shippingResponse;
+      const token = await getShiprocketToken();
+      if (token) {
+        shippingResponse = await createShiprocketShipment(
+          token,
+          { id: orderId, items: orders.flatMap((order) => order.items) },
+          updatedUser
+        );
+      }
+      // Save the shipping response
+      await prisma.shipping.create({
+        data: {
+          orderId: orderId,
+          address: user.address,
+          city: user.city,
+          state: user.state,
+          pinCode: user.pincode,
+          status: "PENDING",
+          shippedAt: shippingResponse.shipped_at
+            ? new Date(shippingResponse.shipped_at)
+            : null,
+          deliveredAt: shippingResponse.delivered_at
+            ? new Date(shippingResponse.delivered_at)
+            : null,
+        },
+      });
       const name = `${updatedUser.first_name} ${updatedUser.last_name}`;
       return { orderId, name };
     });
@@ -281,8 +284,8 @@ async function getShiprocketToken() {
   const response = await axios.post(
     "https://apiv2.shiprocket.in/v1/external/auth/login",
     {
-      email: "your-email@example.com",
-      password: "your-password",
+      email: process.env.SHIPROCKET_USER,
+      password: process.env.SHIPROCKET_PASSWORD,
     }
   );
   return response.data.token;
@@ -309,7 +312,7 @@ async function createShiprocketShipment(token: string, order: any, user: any) {
       shipping_is_billing: true,
       order_items: order.items.map((item: any) => ({
         name: item.name,
-        sku: item.productId,
+        sku: item.id,
         units: item.quantity,
         selling_price: item.price,
         discount: item.discount || 0,
