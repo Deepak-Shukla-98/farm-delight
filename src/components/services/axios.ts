@@ -8,6 +8,9 @@ export const signUp = async (payload: {}) => {
 export const signIn = async (payload: {}) => {
   return await ServiceHandler(axios.post(`/auth/signin`, payload));
 };
+export const resetPassword = async (payload: {}) => {
+  return await ServiceHandler(axios.post(`/auth/reset-password`, payload));
+};
 export const getProducts = async (payload: {}) => {
   return await ServiceHandler(
     axios.get(`/product/`, {
