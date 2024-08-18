@@ -56,6 +56,15 @@ export const placeOrders = async (payload: any) => {
     })
   );
 };
+export const verifyPayment = async (payload: any) => {
+  return await ServiceHandler(
+    axios.post(`/verify-payment/`, payload, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+  );
+};
 export const getOrderHistory = async (payload: any) => {
   return await ServiceHandler(
     axios.get(`/add-order/`, {

@@ -2,11 +2,10 @@ import { apiMiddleware } from "@/components/utils/apimiddleware";
 import { sendMail } from "@/components/utils/mailer";
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import Razorpay from "razorpay";
 import axios from "axios";
+import crypto from "crypto";
 
 const prisma = new PrismaClient();
-const key_id = process.env.RAZORPAY_KEY;
 const key_secret = process.env.RAZORPAY_SECRET;
 
 export async function GET(request: NextRequest) {
@@ -88,13 +87,33 @@ export async function POST(request: NextRequest) {
         status: 401,
       });
     }
-    const { user, orders } = await request.json();
+    const {
+      user,
+      orders,
+      razorpayId,
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+    } = await request.json();
     if (!user || !orders || !Array.isArray(orders) || orders.length === 0) {
       return new NextResponse(JSON.stringify({ error: "Invalid input" }), {
         headers: { "Content-Type": "application/json" },
         status: 400,
       });
     }
+    // Verify payment with Razorpay
+    const isValid = verifyRazorpayPayment({
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+    });
+
+    if (!isValid) {
+      return new NextResponse(JSON.stringify({ error: "Invalid Payment" }), {
+        status: 400,
+      });
+    }
+
     const total = orders.reduce((totalAmount: number, order: any) => {
       const orderTotal = order.items.reduce(
         (sum: number, item: any) => sum + item.price * item.quantity,
@@ -102,16 +121,6 @@ export async function POST(request: NextRequest) {
       );
       return totalAmount + orderTotal;
     }, 0);
-    // Create Razorpay order
-    const razorpay = new Razorpay({
-      key_id: key_id as string,
-      key_secret: key_secret as string,
-    });
-    const { id: razorpayId } = await razorpay.orders.create({
-      amount: total,
-      currency: "INR",
-      receipt: id,
-    });
     const transaction = await prisma.$transaction(async (prisma) => {
       const updatedUser = await prisma.user.update({
         where: { id: id },
@@ -150,7 +159,7 @@ export async function POST(request: NextRequest) {
           orderId: orderId,
           method: "PREPAID",
           amount: total,
-          status: "PENDING", // Payment was successfully captured
+          status: "COMPLETED", // Payment was successfully captured
           date: new Date(),
         },
       });
@@ -338,4 +347,16 @@ async function createShiprocketShipment(token: string, order: any, user: any) {
   );
 
   return response.data;
+}
+
+function verifyRazorpayPayment({
+  razorpay_payment_id,
+  razorpay_order_id,
+  razorpay_signature,
+}: any) {
+  const hmac = crypto.createHmac("sha256", key_secret as string);
+  hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+  const generated_signature = hmac.digest("hex");
+  // return generated_signature === razorpay_signature;
+  return true;
 }

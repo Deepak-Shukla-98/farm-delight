@@ -4,7 +4,7 @@ import { useSharedContext } from "@/components/context/sharedContext";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import OrderForm from "@/components/uicomponents/addressform";
-import { placeOrders } from "@/components/services/axios";
+import { placeOrders, verifyPayment } from "@/components/services/axios";
 import { useRouter } from "next/navigation";
 
 declare global {
@@ -59,10 +59,10 @@ function Page() {
       ],
     };
     try {
-      let res = await placeOrders(obj);
+      let res = await verifyPayment(total);
       if (res) {
         const options = {
-          key: process.env.RAZORPAY_KEY, // Replace with your Razorpay Key ID
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY, // Replace with your Razorpay Key ID
           amount: res.amount, // Amount in currency subunits
           currency: "INR",
           name: "Farm Delight",
@@ -72,9 +72,9 @@ function Page() {
           handler: async function (response: any) {
             try {
               // Verify the payment on the server
-              // await verifyPayment(response);
+              let reponse = await placeOrders({ response, ...obj });
               toast.success("Payment Successful!");
-              router.push(`/order-placed?id=${res.id}`);
+              router.push(`/order-placed?id=${reponse.id}`);
               localStorage.setItem("cart", JSON.stringify([]));
               dispatch({
                 type: "UPDATE_CART",
@@ -86,18 +86,19 @@ function Page() {
             }
           },
           prefill: {
-            name: res.name,
-            email: res.email,
-            contact: res.phone,
+            name: obj.user.first_name + " " + obj.user.last_name,
+            email: obj.user.email,
+            contact: obj.user.phone,
           },
           notes: {
-            address: res.address,
+            address: obj.user.address,
           },
           theme: {
             color: "#3399cc",
           },
         };
         if (window.Razorpay) {
+          console.log({ options });
           const paymentObject = new window.Razorpay(options);
           paymentObject.on("payment.failed", function (response: any) {
             toast.error("Payment Failed!");

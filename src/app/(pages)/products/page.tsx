@@ -21,10 +21,11 @@ export default function Shop() {
   } = useSharedContext();
   const getData = async () => {
     let data = await getProducts({});
-    dispatch({
-      type: "SET_ALL_PRODUCTS",
-      payload: data,
-    });
+    if (!!data)
+      dispatch({
+        type: "SET_ALL_PRODUCTS",
+        payload: data,
+      });
     setProducts(data);
   };
   useEffect(() => {
