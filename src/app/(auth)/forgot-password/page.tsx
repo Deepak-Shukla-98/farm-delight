@@ -22,8 +22,8 @@ function Page() {
   });
   const changePassword = async () => {
     if (data.password === data["confirm-password"]) {
-      await resetPassword(data);
-      router.push(`/signin`);
+      let message = await resetPassword(data);
+      if (message) router.push(`/signin`);
     } else {
       toast.error("Password didn't match!");
     }

@@ -43,8 +43,8 @@ export default function SignIn() {
       });
       localStorage.setItem("token", `Bearer ${data.token}`);
       if (data.user.userType === "ADMIN")
-        localStorage.setItem("user_type", `Bearer ${data.user.userType}`);
-      router.back();
+        localStorage.setItem("user_type", `${data.user.userType}`);
+      router.push("/products");
     }
   };
   useEffect(() => {
