@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
     }
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get("id") as string;
+    const shipping_cost = 99;
     if (!!query) {
       const orders = await prisma.order.findMany({
         where: { id: query },
@@ -34,7 +35,13 @@ export async function GET(request: NextRequest) {
           status: 404, // Not Found
         });
       }
-      return new Response(JSON.stringify(orders), {
+      let data = orders.map((d) => ({
+        ...d,
+        total:
+          d.orderItems.reduce((a, s) => a + s.price * s.quantity, 0) +
+          shipping_cost,
+      }));
+      return new Response(JSON.stringify(data), {
         headers: {
           "Content-type": "application/json",
         },
@@ -56,7 +63,9 @@ export async function GET(request: NextRequest) {
       let data = orders
         .map((d) => ({
           ...d,
-          total: d.orderItems.reduce((a, s) => a + s.price, 0),
+          total:
+            d.orderItems.reduce((a, s) => a + s.price * s.quantity, 0) +
+            shipping_cost,
         }))
         .reverse();
       return new Response(JSON.stringify(data), {
@@ -113,14 +122,15 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
     }
-
-    const total = orders.reduce((totalAmount: number, order: any) => {
-      const orderTotal = order.items.reduce(
-        (sum: number, item: any) => sum + item.price * item.quantity,
-        0
-      );
-      return totalAmount + orderTotal;
-    }, 0);
+    const shipping_cost = 99;
+    const total =
+      orders.reduce((totalAmount: number, order: any) => {
+        const orderTotal = order.items.reduce(
+          (sum: number, item: any) => sum + item.price * item.quantity,
+          0
+        );
+        return totalAmount + orderTotal;
+      }, 0) + shipping_cost;
     const transaction = await prisma.$transaction(async (prisma) => {
       const updatedUser = await prisma.user.update({
         where: { id: id },

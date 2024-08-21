@@ -1,10 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useSharedContext } from "@/components/context/sharedContext";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import { getProducts } from "@/components/services/axios";
 
 export default function Products() {
   const params = useParams();
@@ -141,7 +140,7 @@ export default function Products() {
                     Price:
                   </span>
                   <span className="text-gray-600 dark:text-gray-300 mx-1">
-                    ${data.price}
+                    ₹{data.price}
                   </span>
                 </div>
                 <div>

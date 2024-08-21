@@ -134,9 +134,9 @@ function Cart() {
     0
   );
   let discount =
-    products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 50;
+    products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 0;
   let store = 99;
-  let total = sum + store - discount;
+  let total = sum + store;
   return (
     <section className="bg-white antialiased dark:bg-gray-900">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
@@ -221,7 +221,7 @@ function Cart() {
                         </div>
                         <div className="text-end md:order-4 md:w-32">
                           <p className="text-base font-bold text-gray-900 dark:text-white">
-                            ${d.price}
+                            ₹{d.price}
                           </p>
                         </div>
                       </div>
@@ -359,10 +359,10 @@ function Cart() {
                     </div>
                     <div>
                       <p className="text-lg font-bold text-gray-900 dark:text-white">
-                        <span className="line-through"> ${d.price + 100} </span>
+                        <span className="line-through"> ₹{d.price + 100} </span>
                       </p>
                       <p className="text-lg font-bold leading-tight text-red-600 dark:text-red-500">
-                        ${d.price}
+                        ₹{d.price}
                       </p>
                     </div>
                     <div className="mt-6 flex items-center gap-2.5">
@@ -409,7 +409,7 @@ function Cart() {
                       Original price
                     </dt>
                     <dd className="text-base font-medium text-gray-900 dark:text-white">
-                      ${sum}
+                      ₹{sum}
                     </dd>
                   </dl>
 
@@ -418,7 +418,7 @@ function Cart() {
                       Savings
                     </dt>
                     <dd className="text-base font-medium text-green-600">
-                      -${discount}
+                      -₹{discount}
                     </dd>
                   </dl>
 
@@ -427,7 +427,7 @@ function Cart() {
                       Store Pickup
                     </dt>
                     <dd className="text-base font-medium text-gray-900 dark:text-white">
-                      ${store}
+                      ₹{store}
                     </dd>
                   </dl>
                 </div>
@@ -436,7 +436,7 @@ function Cart() {
                     Total
                   </dt>
                   <dd className="text-base font-bold text-gray-900 dark:text-white">
-                    ${total}
+                    ₹{total}
                   </dd>
                 </dl>
               </div>

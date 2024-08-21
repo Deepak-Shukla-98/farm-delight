@@ -82,11 +82,11 @@ export default function Shop() {
             </p>
             <div className="flex items-center">
               <p className="text-lg font-semibold text-black cursor-auto my-3">
-                ${d.price}
+                ₹{d.price}
               </p>
               <del>
                 <p className="text-sm text-gray-600 cursor-auto ml-2">
-                  ${d.price + 100}
+                  ₹{d.price + 100}
                 </p>
               </del>
               <div

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       key_id: key_id as string,
       key_secret: key_secret as string,
     });
-    console.log({ key_id, key_secret });
+
     const { id: razorpayId } = await razorpay.orders.create({
       amount: total * 100,
       currency: "INR",

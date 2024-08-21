@@ -84,7 +84,7 @@ function Page() {
                                 Price
                               </p>
                               <p className="lg:mt-4 font-medium text-sm leading-7 text-indigo-600">
-                                ${f.price}
+                                ₹{f.price}
                               </p>
                             </div>
                           </div>
@@ -121,7 +121,7 @@ function Page() {
               <div className="flex flex-col sm:flex-row items-center max-lg:border-b border-gray-200"></div>
               <p className="font-semibold text-lg text-black py-6">
                 Total Price:{" "}
-                <span className="text-indigo-600"> ${d.total}</span>
+                <span className="text-indigo-600"> ₹{d.total}</span>
               </p>
             </div>
           </div>

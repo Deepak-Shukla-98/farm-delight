@@ -1,5 +1,6 @@
 "use client";
 import { getOrdersById, updateAdminOrders } from "@/components/services/axios";
+import moment from "moment";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -28,7 +29,7 @@ function Page() {
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-          Track the delivery of order #957684673
+          Track the delivery of order #{orders.id.substring(0, 9)}
         </h2>
 
         <div className="mt-6 sm:mt-8 lg:flex lg:gap-8">
@@ -56,7 +57,7 @@ function Page() {
                     <span className="font-medium text-gray-900 dark:text-white">
                       Product ID:
                     </span>{" "}
-                    BJ8364850
+                    {d.productId.substring(0, 9)}
                   </p>
 
                   <div className="flex items-center justify-end gap-4">
@@ -65,7 +66,7 @@ function Page() {
                     </p>
 
                     <p className="text-xl font-bold leading-tight text-gray-900 dark:text-white">
-                      ${d.quantity * d.price}
+                      ₹{d.price}
                     </p>
                   </div>
                 </div>
@@ -78,7 +79,7 @@ function Page() {
                     Original price
                   </dt>
                   <dd className="font-medium text-gray-900 dark:text-white">
-                    ${total + 199}
+                    ₹{total}
                   </dd>
                 </dl>
 
@@ -87,7 +88,7 @@ function Page() {
                     Savings
                   </dt>
                   <dd className="text-base font-medium text-green-500">
-                    -$199
+                    -₹0.00
                   </dd>
                 </dl>
 
@@ -96,18 +97,18 @@ function Page() {
                     Store Pickup
                   </dt>
                   <dd className="font-medium text-gray-900 dark:text-white">
-                    $99
+                    ₹99
                   </dd>
                 </dl>
 
-                <dl className="flex items-center justify-between gap-4">
+                {/* <dl className="flex items-center justify-between gap-4">
                   <dt className="font-normal text-gray-500 dark:text-gray-400">
                     Tax
                   </dt>
                   <dd className="font-medium text-gray-900 dark:text-white">
-                    $99
+                  ₹99
                   </dd>
-                </dl>
+                </dl> */}
               </div>
 
               <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
@@ -115,7 +116,7 @@ function Page() {
                   Total
                 </dt>
                 <dd className="text-lg font-bold text-gray-900 dark:text-white">
-                  ${total + 198}
+                  ₹{orders.total}
                 </dd>
               </dl>
             </div>
@@ -149,7 +150,8 @@ function Page() {
                     </svg>
                   </span>
                   <h4 className="mb-0.5 text-base font-semibold text-gray-900 dark:text-white">
-                    Estimated delivery in 24 Nov 2023
+                    Estimated delivery by{" "}
+                    {moment(orders.createdAt).add(9, "days").format("LL")}
                   </h4>
                   <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
                     Products delivered
@@ -204,7 +206,9 @@ function Page() {
                       />
                     </svg>
                   </span>
-                  <h4 className="mb-0.5 font-semibold">23 Nov 2023, 15:15</h4>
+                  <h4 className="mb-0.5 font-semibold">
+                    {moment(orders.createdAt).add(7, "days").format("LLL")}
+                  </h4>
                   <p className="text-sm">Products in the courier's warehouse</p>
                 </li>
 
@@ -229,7 +233,7 @@ function Page() {
                     </svg>
                   </span>
                   <h4 className="mb-0.5 text-base font-semibold">
-                    22 Nov 2023, 12:27
+                    {moment(orders.createdAt).add(5, "days").format("LLL")}
                   </h4>
                   <p className="text-sm">
                     Products delivered to the courier - DHL Express
@@ -256,8 +260,10 @@ function Page() {
                       />
                     </svg>
                   </span>
-                  <h4 className="mb-0.5 font-semibold">19 Nov 2023, 10:47</h4>
-                  <p className="text-sm">Payment accepted - VISA Credit Card</p>
+                  <h4 className="mb-0.5 font-semibold">
+                    {moment(orders.createdAt).format("LLL")}
+                  </h4>
+                  <p className="text-sm">Payment accepted</p>
                 </li>
 
                 <li className="ms-6 text-primary-700 dark:text-primary-500">
@@ -281,9 +287,11 @@ function Page() {
                     </svg>
                   </span>
                   <div>
-                    <h4 className="mb-0.5 font-semibold">19 Nov 2023, 10:45</h4>
+                    <h4 className="mb-0.5 font-semibold">
+                      {moment(orders.createdAt).format("LLL")}
+                    </h4>
                     <a href="#" className="text-sm font-medium hover:underline">
-                      Order placed - Receipt #647563
+                      Order placed - Receipt #{orders.id.substring(0, 9)}
                     </a>
                   </div>
                 </li>

@@ -23,7 +23,7 @@ function Page() {
     0
   );
   let discount =
-    products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 50;
+    products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 0;
   let store = 99;
   let total = sum + store - discount;
 
@@ -135,7 +135,7 @@ function Page() {
                     <span className="float-right text-gray-400">
                       Quantity: {d.quantity}
                     </span>
-                    <p className="text-lg font-bold">${d.price}</p>
+                    <p className="text-lg font-bold">₹{d.price}</p>
                   </div>
                 </div>
               ))}
@@ -174,20 +174,20 @@ function Page() {
               <div className="mt-6 border-t border-b py-2">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Subtotal</p>
-                  <p className="font-semibold text-gray-900">${sum}</p>
+                  <p className="font-semibold text-gray-900">₹{sum}</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Discount</p>
-                  <p className="font-semibold text-gray-900">${discount}</p>
+                  <p className="font-semibold text-gray-900">₹{discount}</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Shipping</p>
-                  <p className="font-semibold text-gray-900">${store}</p>
+                  <p className="font-semibold text-gray-900">₹{store}</p>
                 </div>
               </div>
               <div className="mt-6 flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-900">Total</p>
-                <p className="text-2xl font-semibold text-gray-900">${total}</p>
+                <p className="text-2xl font-semibold text-gray-900">₹{total}</p>
               </div>
             </div>
           ) : null}

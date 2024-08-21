@@ -16,10 +16,6 @@ function Page() {
   useEffect(() => {
     getData();
   }, []);
-  const total = orders.orderItems.reduce(
-    (a: any, s: any) => a + s?.price * s?.quantity,
-    0
-  );
   const handleCancel = async () => {
     let { orderItems, ...rest } = orders;
     await updateAdminOrders({ ...rest, status: "CANCELLED" });
@@ -94,7 +90,7 @@ function Page() {
                             Price
                           </p>
                           <p className="lg:mt-4 font-medium text-sm leading-7 text-indigo-600">
-                            ${d.price}
+                            ₹{d.price}
                           </p>
                         </div>
                       </div>
@@ -155,7 +151,8 @@ function Page() {
               </div>
             )}
             <p className="font-semibold text-lg text-black py-6">
-              Total Price: <span className="text-indigo-600"> ${total}</span>
+              Total Price:{" "}
+              <span className="text-indigo-600"> ₹{orders.total}</span>
             </p>
           </div>
         </div>
