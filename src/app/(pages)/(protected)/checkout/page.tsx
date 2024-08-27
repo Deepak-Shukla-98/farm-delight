@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useSharedContext } from "@/components/context/sharedContext";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
@@ -14,6 +14,7 @@ declare global {
 }
 function Page() {
   const router = useRouter();
+  const [store, setStore] = useState(0);
   const {
     state: { products_in_cart },
     dispatch,
@@ -24,7 +25,6 @@ function Page() {
   );
   let discount =
     products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 0;
-  let store = 99;
   let total = sum + store - discount;
 
   const initializeRazorpay = () => {
@@ -98,7 +98,6 @@ function Page() {
           },
         };
         if (window.Razorpay) {
-          console.log({ options });
           const paymentObject = new window.Razorpay(options);
           paymentObject.on("payment.failed", function (response: any) {
             toast.error("Payment Failed!");
@@ -113,6 +112,10 @@ function Page() {
       console.error("Place Orders Error:", error); // Debug: Check place orders error
     }
   };
+
+  function handleDataUpdate(data: any) {
+    setStore(data);
+  }
   return (
     <>
       <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32">
@@ -192,7 +195,7 @@ function Page() {
             </div>
           ) : null}
         </div>
-        <OrderForm handleSubmit={handleSubmit} />
+        <OrderForm handleSubmit={handleSubmit} setStore={handleDataUpdate} />
       </div>
     </>
   );

@@ -134,3 +134,13 @@ export const getUserdetails = async (payload: any) => {
     })
   );
 };
+export const getShippingCost = async (payload: any) => {
+  return await ServiceHandler(
+    axios.get(`/shipping-cost/`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+      params: payload,
+    })
+  );
+};

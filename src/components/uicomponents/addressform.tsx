@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
-import { getUserdetails } from "../services/axios";
+import { getUserdetails, getShippingCost } from "../services/axios";
 
 interface IFormInputs {
   email: string;
@@ -18,6 +18,7 @@ interface IFormInputs {
 }
 interface OrderFormProps {
   handleSubmit: (data: void) => void;
+  setStore: (data: void) => void;
 }
 const schema = yup.object().shape({
   email: yup.string().required("Enter an email"),
@@ -71,6 +72,7 @@ const states = [
 ];
 const OrderForm: React.FC<OrderFormProps> = ({
   handleSubmit = () => {},
+  setStore = () => {},
 }: any) => {
   const [data, setData] = useState({
     email: "",
@@ -86,7 +88,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
   });
   const getData = async () => {
     let res = await getUserdetails({});
-    if (!!res) setData((d) => ({ ...d, ...res }));
+    if (!!res) setData((d: any) => ({ ...d, ...res }));
   };
   useEffect(() => {
     getData();
@@ -94,7 +96,13 @@ const OrderForm: React.FC<OrderFormProps> = ({
   const onSubmit = (values: IFormInputs) => {
     handleSubmit(values);
   };
-
+  const getCost = async (pincode: any) => {
+    let res = await getShippingCost({ pincode: pincode, weight: "0.250" });
+    if (!!res) setStore(res.freight_charge);
+  };
+  useEffect(() => {
+    if (!!data.pincode) getCost(data.pincode);
+  }, [data.pincode]);
   return (
     <Formik
       initialValues={data}
@@ -226,6 +234,10 @@ const OrderForm: React.FC<OrderFormProps> = ({
                 type="text"
                 name="pincode"
                 className="w-full border border-gray-300 p-2 rounded-md"
+                onChange={(e: any) => {
+                  handleChange(e);
+                  getCost(e.target.value);
+                }}
               />
               <ErrorMessage
                 name="pincode"
