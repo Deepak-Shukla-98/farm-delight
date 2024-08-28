@@ -135,8 +135,7 @@ function Cart() {
   );
   let discount =
     products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 0;
-  let store = 99;
-  let total = sum + store;
+  let total = sum;
   return (
     <section className="bg-white antialiased dark:bg-gray-900">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
@@ -427,7 +426,7 @@ function Cart() {
                       Store Pickup
                     </dt>
                     <dd className="text-base font-medium text-gray-900 dark:text-white">
-                      ₹{store}
+                      ₹{0.0}
                     </dd>
                   </dl>
                 </div>

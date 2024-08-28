@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { getProducts } from "@/components/services/axios";
 // import "../../../../public/assets/css/theme.min.css";
 
 const Header = () => {
@@ -40,6 +41,17 @@ const Header = () => {
     router.push("/");
   };
 
+  const getData = async () => {
+    let data = await getProducts({});
+    if (!!data)
+      dispatch({
+        type: "SET_ALL_PRODUCTS",
+        payload: data,
+      });
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <nav
       className="top-0 w-full py-3 bg-light opacity-85"
