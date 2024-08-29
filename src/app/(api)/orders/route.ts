@@ -9,7 +9,18 @@ export async function GET(request: NextRequest) {
     const { id } = (await apiMiddleware(request)) as { id: string };
     if (!!id) {
       const orders = await prisma.order.findMany({
-        include: { orderItems: true },
+        include: {
+          orderItems: true,
+          user: {
+            select: {
+              email: true,
+              first_name: true,
+              last_name: true,
+            },
+          },
+          shipping: true,
+          payment: true,
+        },
       });
       if (!orders) {
         return new Response(JSON.stringify({ error: "No Orders" }), {
