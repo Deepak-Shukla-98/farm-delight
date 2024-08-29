@@ -98,7 +98,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
   };
   const getCost = async (pincode: any) => {
     let res = await getShippingCost({ pincode: pincode, weight: "0.250" });
-    if (!!res) setStore(res.freight_charge);
+    if (!!res) setStore(res);
   };
   useEffect(() => {
     if (!!data.pincode) getCost(data.pincode);

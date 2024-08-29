@@ -29,7 +29,7 @@ function Page() {
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-          Track the delivery of order #{orders.id.substring(0, 9)}
+          Track the delivery of order #{orders.id}
         </h2>
 
         <div className="mt-6 sm:mt-8 lg:flex lg:gap-8">
@@ -97,7 +97,7 @@ function Page() {
                     Store Pickup
                   </dt>
                   <dd className="font-medium text-gray-900 dark:text-white">
-                    ₹99
+                    ₹{orders.total - total}
                   </dd>
                 </dl>
 
@@ -151,7 +151,7 @@ function Page() {
                   </span>
                   <h4 className="mb-0.5 text-base font-semibold text-gray-900 dark:text-white">
                     Estimated delivery by{" "}
-                    {moment(orders.createdAt).add(9, "days").format("LL")}
+                    {moment(orders?.shipping?.etd).format("LL")}
                   </h4>
                   <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
                     Products delivered
@@ -186,7 +186,7 @@ function Page() {
                   </p>
                 </li>
 
-                <li className="mb-10 ms-6 text-primary-700 dark:text-primary-500">
+                {/* <li className="mb-10 ms-6 text-primary-700 dark:text-primary-500">
                   <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white dark:bg-primary-900 dark:ring-gray-800">
                     <svg
                       className="h-4 w-4"
@@ -211,7 +211,6 @@ function Page() {
                   </h4>
                   <p className="text-sm">Products in the courier's warehouse</p>
                 </li>
-
                 <li className="mb-10 ms-6 text-primary-700 dark:text-primary-500">
                   <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white dark:bg-primary-900 dark:ring-gray-800">
                     <svg
@@ -238,7 +237,7 @@ function Page() {
                   <p className="text-sm">
                     Products delivered to the courier - DHL Express
                   </p>
-                </li>
+                </li> */}
 
                 <li className="mb-10 ms-6 text-primary-700 dark:text-primary-500">
                   <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white dark:bg-primary-900 dark:ring-gray-800">
@@ -291,7 +290,7 @@ function Page() {
                       {moment(orders.createdAt).format("LLL")}
                     </h4>
                     <a href="#" className="text-sm font-medium hover:underline">
-                      Order placed - Receipt #{orders.id.substring(0, 9)}
+                      Order placed - Receipt #{orders.id}
                     </a>
                   </div>
                 </li>

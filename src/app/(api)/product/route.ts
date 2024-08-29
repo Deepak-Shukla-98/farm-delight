@@ -60,14 +60,33 @@ export async function POST(request: NextRequest) {
         data[key] = value;
       }
     });
-    const { name, price, discount, inventory, status, photo } = data;
+    const {
+      name,
+      price,
+      discount,
+      inventory,
+      photo,
+      short_desc,
+      long_desc,
+      length,
+      breadth,
+      height,
+      weight,
+      status,
+    } = data;
     const product = await prisma.product.create({
       data: {
         name,
         price: parseFloat(price),
         discount: parseFloat(discount),
         photo,
-        inventory: parseInt(inventory, 10),
+        inventory: parseInt(inventory),
+        short_desc,
+        long_desc,
+        length: parseFloat(length),
+        breadth: parseFloat(breadth),
+        height: parseFloat(height),
+        weight: parseFloat(weight),
         status: status === "in_stock",
       },
     });
@@ -116,6 +135,12 @@ export async function PUT(request: NextRequest) {
       inventory,
       status,
       photo,
+      short_desc,
+      long_desc,
+      length,
+      breadth,
+      height,
+      weight,
     } = data;
     const updatedProduct = await prisma.product.update({
       where: { id: productId },
@@ -125,6 +150,12 @@ export async function PUT(request: NextRequest) {
         discount: parseFloat(discount),
         photo,
         inventory: parseInt(inventory, 10),
+        short_desc,
+        long_desc,
+        length: parseFloat(length),
+        breadth: parseFloat(breadth),
+        height: parseFloat(height),
+        weight: parseFloat(weight),
         status: status === "in_stock",
       },
     });

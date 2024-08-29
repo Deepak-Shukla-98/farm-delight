@@ -21,11 +21,10 @@ export async function GET(request: NextRequest) {
     }
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get("id") as string;
-    const shipping_cost = 99;
     if (!!query) {
       const orders = await prisma.order.findMany({
         where: { id: query },
-        include: { orderItems: true },
+        include: { orderItems: true, shipping: true },
       });
       if (!orders) {
         return new Response(JSON.stringify({ error: "No Orders" }), {
@@ -35,13 +34,7 @@ export async function GET(request: NextRequest) {
           status: 404, // Not Found
         });
       }
-      let data = orders.map((d) => ({
-        ...d,
-        total:
-          d.orderItems.reduce((a, s) => a + s.price * s.quantity, 0) +
-          shipping_cost,
-      }));
-      return new Response(JSON.stringify(data), {
+      return new Response(JSON.stringify(orders), {
         headers: {
           "Content-type": "application/json",
         },
@@ -50,7 +43,7 @@ export async function GET(request: NextRequest) {
     } else {
       const orders = await prisma.order.findMany({
         where: { userId: id },
-        include: { orderItems: true },
+        include: { orderItems: true, shipping: true },
       });
       if (!orders) {
         return new Response(JSON.stringify({ error: "No Orders" }), {
@@ -60,14 +53,7 @@ export async function GET(request: NextRequest) {
           status: 404, // Not Found
         });
       }
-      let data = orders
-        .map((d) => ({
-          ...d,
-          total:
-            d.orderItems.reduce((a, s) => a + s.price * s.quantity, 0) +
-            shipping_cost,
-        }))
-        .reverse();
+      let data = orders.reverse();
       return new Response(JSON.stringify(data), {
         headers: {
           "Content-type": "application/json",
@@ -99,6 +85,7 @@ export async function POST(request: NextRequest) {
     const {
       user,
       orders,
+      total,
       razorpayId,
       razorpay_payment_id,
       razorpay_order_id,
@@ -122,15 +109,7 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
     }
-    const shipping_cost = 99;
-    const total =
-      orders.reduce((totalAmount: number, order: any) => {
-        const orderTotal = order.items.reduce(
-          (sum: number, item: any) => sum + item.price * item.quantity,
-          0
-        );
-        return totalAmount + orderTotal;
-      }, 0) + shipping_cost;
+
     const transaction = await prisma.$transaction(async (prisma) => {
       const updatedUser = await prisma.user.update({
         where: { id: id },
@@ -148,6 +127,7 @@ export async function POST(request: NextRequest) {
         prisma.order.create({
           data: {
             userId: id,
+            total: total,
             status: order.status,
             orderItems: {
               create: order.items.map((item: any) => ({
@@ -191,6 +171,10 @@ export async function POST(request: NextRequest) {
           city: user.city,
           state: user.state,
           pinCode: user.pincode,
+          freight_charge: user.freight_charge,
+          etd: user.etd,
+          courier_company_id: user.courier_company_id,
+          courier_name: user.courier_name,
           status: "PENDING",
           shippedAt: shippingResponse.shipped_at
             ? new Date(shippingResponse.shipped_at)

@@ -14,7 +14,12 @@ declare global {
 }
 function Page() {
   const router = useRouter();
-  const [store, setStore] = useState(0);
+  const [store, setStore] = useState({
+    freight_charge: 0,
+    etd: null,
+    courier_company_id: null,
+    courier_name: null,
+  });
   const {
     state: { products_in_cart },
     dispatch,
@@ -25,7 +30,7 @@ function Page() {
   );
   let discount =
     products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 0;
-  let total = sum + store - discount;
+  let total = sum + store.freight_charge - discount;
 
   const initializeRazorpay = () => {
     return new Promise((resolve) => {
@@ -50,7 +55,8 @@ function Page() {
       return;
     }
     let obj = {
-      user: data,
+      user: { ...data, ...store },
+      total: total,
       orders: [
         {
           status: "PENDING",
@@ -185,7 +191,9 @@ function Page() {
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Shipping</p>
-                  <p className="font-semibold text-gray-900">₹{store}</p>
+                  <p className="font-semibold text-gray-900">
+                    ₹{store.freight_charge}
+                  </p>
                 </div>
               </div>
               <div className="mt-6 flex items-center justify-between">

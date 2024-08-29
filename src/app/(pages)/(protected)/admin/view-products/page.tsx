@@ -47,6 +47,12 @@ const ProductListPage = () => {
     discount: null,
     photo: null,
     inventory: null,
+    short_desc: "",
+    long_desc: "",
+    length: null,
+    breadth: null,
+    height: null,
+    weight: null,
     status: null,
   });
   const fetchProducts = async () => {
@@ -72,6 +78,12 @@ const ProductListPage = () => {
     if (values.photo instanceof File) {
       formData.append("photo", values.photo);
     }
+    formData.append("short_desc", values.short_desc.toString());
+    formData.append("long_desc", values.long_desc.toString());
+    formData.append("length", values.length.toString());
+    formData.append("breadth", values.breadth.toString());
+    formData.append("height", values.height.toString());
+    formData.append("weight", values.weight.toString());
     formData.append("inventory", values.inventory.toString());
     formData.append("status", values.status);
     await updateProducts(formData);
@@ -154,7 +166,7 @@ const ProductListPage = () => {
       <Modal
         isOpen={isModalOpen}
         onOpenChange={() => setIsModalOpen(false)}
-        style={{ marginTop: "200px" }}
+        // style={{ marginTop: "200px" }}
       >
         <ModalContent>
           <ModalHeader>
@@ -168,110 +180,225 @@ const ProductListPage = () => {
             >
               {({ setFieldValue }) => (
                 <Form>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Name
-                    </label>
-                    <Field
-                      type="text"
-                      name="name"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
+                  <div className="grid grid-cols-4 gap-2 md:grid-cols-8 lg:grid-cols-12">
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Name
+                        </label>
+                        <Field
+                          type="text"
+                          name="name"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="name"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Price
+                        </label>
+                        <Field
+                          type="number"
+                          name="price"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="price"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Discount
+                        </label>
+                        <Field
+                          type="number"
+                          name="discount"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="discount"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Photo
+                        </label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(event) => {
+                            if (event.currentTarget.files) {
+                              setFieldValue(
+                                "photo",
+                                event.currentTarget.files[0]
+                              );
+                            }
+                          }}
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="photo"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Short Desc
+                        </label>
+                        <Field
+                          type="text"
+                          name="short_desc"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="short_desc"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Long Desc
+                        </label>
+                        <Field
+                          type="text"
+                          name="long_desc"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="long_desc"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Length
+                        </label>
+                        <Field
+                          type="number"
+                          name="length"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="length"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Breadth
+                        </label>
+                        <Field
+                          type="number"
+                          name="breadth"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="breadth"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Height
+                        </label>
+                        <Field
+                          type="number"
+                          name="height"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="height"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Weight
+                        </label>
+                        <Field
+                          type="number"
+                          name="weight"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="weight"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Inventory
+                        </label>
+                        <Field
+                          type="number"
+                          name="inventory"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        />
+                        <ErrorMessage
+                          name="inventory"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-4 lg:col-span-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Status
+                        </label>
+                        <Field
+                          as="select"
+                          name="status"
+                          className="w-full border border-gray-300 p-2 rounded-md"
+                        >
+                          <option value="" label="Select status" />
+                          <option value={"in_stock"} label="In Stock" />
+                          <option value={"out_of_stock"} label="Out Of Stock" />
+                        </Field>
+                        <ErrorMessage
+                          name="status"
+                          component="small"
+                          className="text-red-500 text-xs mt-1"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Price
-                    </label>
-                    <Field
-                      type="number"
-                      name="price"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    />
-                    <ErrorMessage
-                      name="price"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Discount
-                    </label>
-                    <Field
-                      type="number"
-                      name="discount"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    />
-                    <ErrorMessage
-                      name="discount"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Photo
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) => {
-                        if (event.currentTarget.files) {
-                          setFieldValue("photo", event.currentTarget.files[0]);
-                        }
-                      }}
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    />
-                    <ErrorMessage
-                      name="photo"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Inventory
-                    </label>
-                    <Field
-                      type="number"
-                      name="inventory"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    />
-                    <ErrorMessage
-                      name="inventory"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Status
-                    </label>
-                    <Field
-                      as="select"
-                      name="status"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                    >
-                      <option value="" label="Select status" />
-                      <option value={"in_stock"} label="In Stock" />
-                      <option value={"out_of_stock"} label="Out Of Stock" />
-                    </Field>
-                    <ErrorMessage
-                      name="status"
-                      component="small"
-                      className="text-red-500 text-xs mt-1"
-                    />
-                  </div>
                   <ModalFooter>
                     <button
                       className="bg-blue-500 text-white px-4 py-2 rounded"

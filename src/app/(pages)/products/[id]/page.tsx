@@ -13,6 +13,8 @@ export default function Products() {
     price: null,
     photo: "",
     quantity: 0,
+    short_desc: "",
+    long_desc: "",
     status: null,
   });
   const [in_cart, set_in_cart] = useState(false);
@@ -130,9 +132,7 @@ export default function Products() {
                 {data.name}
               </h2>
               <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed
-                ante justo. Integer euismod libero id mauris malesuada
-                tincidunt.
+                {data.short_desc}
               </p>
               <div className="flex mb-4">
                 <div className="mr-4">
@@ -221,14 +221,7 @@ export default function Products() {
                   Product Description:
                 </span>
                 <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-                  sed ante justo. Integer euismod libero id mauris malesuada
-                  tincidunt. Vivamus commodo nulla ut lorem rhoncus aliquet.
-                  Duis dapibus augue vel ipsum pretium, et venenatis sem
-                  blandit. Quisque ut erat vitae nisi ultrices placerat non eget
-                  velit. Integer ornare mi sed ipsum lacinia, non sagittis
-                  mauris blandit. Morbi fermentum libero vel nisl suscipit, nec
-                  tincidunt mi consectetur.
+                  {data.long_desc}
                 </p>
               </div>
               <div className="flex -mx-2 mb-4">

@@ -52,14 +52,20 @@ model User {
 }
 
 model Product {
-  id         String       @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  price      Float
-  discount   Float?
-  photo      String
-  inventory  Int
-  status     Boolean
-  orders     OrderItem[]
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  price       Float
+  discount    Float?
+  photo       String
+  inventory   Int
+  short_desc  String?
+  long_desc   String?
+  length      Float?  
+  breadth     Float?
+  height      Float?
+  weight      Float?
+  status      Boolean
+  orders      OrderItem[]
 }
 
 model Order {
@@ -70,6 +76,7 @@ model Order {
   orderItems          OrderItem[]
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
+  total               Float?
   payment             Payment?
   shipping            Shipping?
   couponId            String?
@@ -103,16 +110,20 @@ model Payment {
 }
 
 model Shipping {
-  id          String         @id @default(auto()) @map("_id") @db.ObjectId
-  orderId     String         @unique
-  order       Order          @relation(fields: [orderId], references: [id])
-  address     String
-  city        String
-  state       String
-  pinCode     String
-  status      ShippingStatus
-  shippedAt   DateTime?
-  deliveredAt DateTime?
+  id                  String         @id @default(auto()) @map("_id") @db.ObjectId
+  orderId             String         @unique
+  order               Order          @relation(fields: [orderId], references: [id])
+  address             String
+  city                String
+  state               String
+  pinCode             String
+  freight_charge      Float
+  etd                 String
+  courier_company_id  Int
+  courier_name        String
+  status              ShippingStatus
+  shippedAt           DateTime?
+  deliveredAt         DateTime?
 }
 
 model Coupon {
