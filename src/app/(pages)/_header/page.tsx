@@ -25,7 +25,7 @@ const Header = () => {
     );
   }, []);
   const {
-    state: { products_in_cart, isAuthenticated },
+    state: { products_in_cart, isAuthenticated, isAdmin },
     dispatch,
   } = useSharedContext();
   const Logout = () => {
@@ -43,11 +43,20 @@ const Header = () => {
 
   const getData = async () => {
     let data = await getProducts({});
-    if (!!data)
-      dispatch({
-        type: "SET_ALL_PRODUCTS",
-        payload: data,
-      });
+    const token_avbl = !!localStorage.getItem("token") ? true : false;
+    const admin = !!localStorage.getItem("user_type") ? true : false;
+    dispatch({
+      type: "SET_ADMIN_STATE",
+      payload: admin,
+    });
+    dispatch({
+      type: "SET_AUTH_STATE",
+      payload: token_avbl,
+    });
+    dispatch({
+      type: "SET_ALL_PRODUCTS",
+      payload: !!data ? data : [],
+    });
   };
   useEffect(() => {
     getData();
@@ -160,7 +169,27 @@ const Header = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
+                    {isAdmin ? (
+                      <>
+                        <DropdownMenuItem>
+                          <Link
+                            className="nav-link fw-medium"
+                            href="/admin/orders"
+                          >
+                            Orders
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Link
+                            className="nav-link fw-medium"
+                            href="/admin/view-products"
+                          >
+                            Products
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      </>
+                    ) : null}
                     <DropdownMenuItem>
                       <Link className="nav-link fw-medium" href="/history">
                         History
