@@ -189,9 +189,9 @@ const ProductListPage = () => {
           >
             {({ setFieldValue, handleChange, values }) => (
               <Form>
-                <div className="my-3 grid grid-cols-4 gap-6 md:grid-cols-8 lg:grid-cols-12">
+                <div className="my-6 grid grid-cols-4 gap-6 md:grid-cols-8 lg:grid-cols-12">
                   <div className="col-span-4 lg:col-span-6">
-                    <div className="relative mt-4">
+                    <div className="relative">
                       <input
                         id="name"
                         type="text"
@@ -215,7 +215,7 @@ const ProductListPage = () => {
                     />
                   </div>
                   <div className="col-span-4 lg:col-span-6">
-                    <div className="relative mt-4">
+                    <div className="relative">
                       <input
                         id="price"
                         type="text"
@@ -436,7 +436,7 @@ const ProductListPage = () => {
                       className="text-red-500 text-xs"
                     />
                   </div>
-                  <div className="col-span-4 lg:col-span-6 mb-2">
+                  <div className="col-span-4 lg:col-span-6">
                     <div className="relative">
                       <input
                         id="inventory"
@@ -460,7 +460,7 @@ const ProductListPage = () => {
                       className="text-red-500 text-xs"
                     />
                   </div>
-                  <div className="col-span-4 lg:col-span-6 mb-2">
+                  <div className="col-span-4 lg:col-span-6">
                     <div className="relative">
                       <select
                         id="status"
@@ -506,9 +506,15 @@ const ProductListPage = () => {
                   </div>
                 </div>
                 <SheetFooter>
-                  <Button type="submit">Save changes</Button>
+                  <Button type="submit" className="my-2">
+                    Save changes
+                  </Button>
                   <SheetClose asChild>
-                    <Button type="button" onClick={() => setIsModalOpen(false)}>
+                    <Button
+                      type="button"
+                      className="my-2"
+                      onClick={() => setIsModalOpen(false)}
+                    >
                       Cancel
                     </Button>
                   </SheetClose>
