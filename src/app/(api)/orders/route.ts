@@ -94,7 +94,7 @@ export async function PUT(request: NextRequest) {
       });
     }
     const data = await request.json();
-    const { id: orderId, ...updateData } = data;
+    const { id: orderId, payment, user, shipping, ...updateData } = data;
     const order = await prisma.order.update({
       where: { id: orderId },
       data: updateData,
