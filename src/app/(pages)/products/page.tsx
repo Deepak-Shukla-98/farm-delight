@@ -61,6 +61,7 @@ export default function Shop() {
       icon: "😃",
     });
   };
+
   return (
     <section
       id="Projects"
@@ -91,7 +92,13 @@ export default function Shop() {
               </del>
               <div
                 className="ml-auto cursor-pointer"
-                onClick={() => handleDispatch(d)}
+                onClick={() =>
+                  d.status
+                    ? handleDispatch(d)
+                    : toast("Out of Stock", {
+                        icon: "😔",
+                      })
+                }
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

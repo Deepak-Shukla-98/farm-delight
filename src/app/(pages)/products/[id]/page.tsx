@@ -163,6 +163,7 @@ export default function Products() {
                       id="decrement-button"
                       data-input-counter-decrement="counter-input"
                       className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                      disabled={!data.status}
                       onClick={() => decQuantity(data.id)}
                     >
                       <svg
@@ -195,6 +196,7 @@ export default function Products() {
                       id="increment-button"
                       data-input-counter-increment="counter-input"
                       className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                      disabled={!data.status}
                       onClick={() => incQuantity(data.id)}
                     >
                       <svg
@@ -228,7 +230,13 @@ export default function Products() {
                 <div className="w-1/2 px-2">
                   <button
                     className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
-                    onClick={() => handleDispatch(data)}
+                    onClick={() =>
+                      data.status
+                        ? handleDispatch(data)
+                        : toast("Out of Stock", {
+                            icon: "😔",
+                          })
+                    }
                   >
                     Add to Cart
                   </button>
