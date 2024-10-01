@@ -188,11 +188,11 @@ export async function POST(request: NextRequest) {
       return { orderId, name };
     });
     // Send order confirmation email
-    await sendMail({
-      to: user.email,
-      subject: "Order Placed",
-      content: htmlTemplate(transaction.name, transaction.orderId),
-    });
+    // await sendMail({
+    //   to: user.email,
+    //   subject: "Order Placed",
+    //   content: htmlTemplate(transaction.name, transaction.orderId),
+    // });
     return new NextResponse(
       JSON.stringify({
         ...user,

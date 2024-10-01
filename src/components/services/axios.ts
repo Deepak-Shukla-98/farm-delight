@@ -63,6 +63,7 @@ export const verifyPayment = async (payload: any) => {
   return await ServiceHandler(
     axios.post(`/verify-payment/`, payload, {
       headers: {
+        "Content-Type": "application/json",
         Authorization: localStorage.getItem("token"),
       },
     })

@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     });
 
     const { id: razorpayId } = await razorpay.orders.create({
-      amount: total * 100,
+      amount: Math.round(total * 100),
       currency: "INR",
       receipt: id,
     });
