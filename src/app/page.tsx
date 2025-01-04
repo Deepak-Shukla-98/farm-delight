@@ -15,6 +15,7 @@ function Default() {
     );
   }, []);
   useEffect(() => {
+    // default light
     setTheme("light");
   }, []);
   return (
