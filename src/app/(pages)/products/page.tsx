@@ -21,12 +21,13 @@ export default function Shop() {
   } = useSharedContext();
   const getData = async () => {
     let data = await getProducts({});
-    if (!!data)
+    if (!!data) {
       dispatch({
         type: "SET_ALL_PRODUCTS",
         payload: data,
       });
-    setProducts(data);
+      setProducts(data);
+    }
   };
   useEffect(() => {
     if (!!allproducts.length) {
@@ -96,8 +97,8 @@ export default function Shop() {
                   d.status
                     ? handleDispatch(d)
                     : toast("Out of Stock", {
-                        icon: "😔",
-                      })
+                      icon: "😔",
+                    })
                 }
               >
                 <svg
