@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
               })),
             },
           },
-        })
+        }),
       );
       const [{ id: orderId }] = await Promise.all(orderPromises);
       // Store payment information in the database
@@ -160,10 +160,18 @@ export async function POST(request: NextRequest) {
         shippingResponse = await createShiprocketShipment(
           token,
           { id: orderId, items: orders.flatMap((order) => order.items) },
-          updatedUser
+          updatedUser,
         );
       }
-      // Save the shipping response
+      // Ensure the order exists before creating shipping
+      const orderExists = await prisma.order.findUnique({
+        where: { id: orderId },
+      });
+      if (!orderExists) {
+        throw new Error(
+          `Order with id ${orderId} does not exist. Cannot create shipping.`,
+        );
+      }
       await prisma.shipping.create({
         data: {
           orderId: orderId,
@@ -172,14 +180,14 @@ export async function POST(request: NextRequest) {
           state: user.state,
           pinCode: user.pincode,
           freight_charge: user.freight_charge,
-          etd: user.etd,
-          courier_company_id: user.courier_company_id,
-          courier_name: user.courier_name,
+          etd: user.etd ?? "",
+          courier_company_id: user.courier_company_id ?? 0,
+          courier_name: user.courier_name ?? "",
           status: "PENDING",
-          shippedAt: shippingResponse.shipped_at
+          shippedAt: shippingResponse?.shipped_at
             ? new Date(shippingResponse.shipped_at)
             : null,
-          deliveredAt: shippingResponse.delivered_at
+          deliveredAt: shippingResponse?.delivered_at
             ? new Date(shippingResponse.delivered_at)
             : null,
         },
@@ -203,7 +211,7 @@ export async function POST(request: NextRequest) {
       {
         headers: { "Content-Type": "application/json" },
         status: 201,
-      }
+      },
     );
   } catch (error) {
     console.log({ error });
@@ -214,7 +222,7 @@ export async function POST(request: NextRequest) {
           "Content-Type": "application/json",
         },
         status: 500,
-      }
+      },
     );
   }
 }
@@ -289,7 +297,7 @@ async function getShiprocketToken() {
     {
       email: process.env.SHIPROCKET_USER,
       password: process.env.SHIPROCKET_PASSWORD,
-    }
+    },
   );
   return response.data.token;
 }
@@ -325,7 +333,7 @@ async function createShiprocketShipment(token: string, order: any, user: any) {
       payment_method: "Prepaid",
       sub_total: order.items.reduce(
         (acc: number, item: any) => acc + item.price * item.quantity,
-        0
+        0,
       ),
       length: 10,
       breadth: 10,
@@ -337,7 +345,7 @@ async function createShiprocketShipment(token: string, order: any, user: any) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   return response.data;

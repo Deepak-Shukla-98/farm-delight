@@ -26,7 +26,7 @@ function Page() {
   } = useSharedContext();
   let sum = products_in_cart.reduce(
     (a: any, s: any) => a + s.price * s.quantity,
-    0
+    0,
   );
   let discount =
     products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 0;
@@ -79,7 +79,7 @@ function Page() {
             try {
               // Verify the payment on the server
               let reponse = await placeOrders({ response, ...obj });
-              toast.success("Payment Successful!");
+              // toast.success("Payment Successful!");
               router.push(`/order-placed?id=${reponse.id}`);
               localStorage.setItem("cart", JSON.stringify([]));
               dispatch({
@@ -87,7 +87,7 @@ function Page() {
                 payload: [],
               });
             } catch (error) {
-              toast.error("Payment verification failed!");
+              // toast.error("Payment verification failed!");
               console.error("Payment Verification Error:", error); // Debug: Check verification error
             }
           },

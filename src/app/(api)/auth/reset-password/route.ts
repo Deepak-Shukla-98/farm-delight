@@ -16,7 +16,7 @@ export async function POST(request: Request, response: Response) {
             "Content-type": "application/json",
           },
           status: 400,
-        }
+        },
       );
     }
 

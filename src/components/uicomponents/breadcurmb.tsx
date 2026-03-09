@@ -28,10 +28,10 @@ export default function Breadcrumb() {
                   index === 0
                     ? "flex items-center gap-2"
                     : index === breadcrumbs.length - 1
-                    ? "flex flex-1 items-center"
-                    : index === breadcrumbs.length - 2
-                    ? "flex items-center gap-2"
-                    : "hidden items-center gap-2 md:flex"
+                      ? "flex flex-1 items-center"
+                      : index === breadcrumbs.length - 2
+                        ? "flex items-center gap-2"
+                        : "hidden items-center gap-2 md:flex"
                 }`}
                 key={index}
               >

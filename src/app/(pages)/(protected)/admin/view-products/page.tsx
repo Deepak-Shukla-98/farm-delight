@@ -273,7 +273,7 @@ const ProductListPage = () => {
                           if (event.currentTarget.files) {
                             setFieldValue(
                               "photo",
-                              event.currentTarget.files[0]
+                              event.currentTarget.files[0],
                             );
                           }
                         }}

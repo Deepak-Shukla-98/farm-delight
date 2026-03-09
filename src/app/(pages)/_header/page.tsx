@@ -21,7 +21,7 @@ const Header = () => {
   const [isToggleOpen, setIsToggleOpen] = useState(false);
   useEffect(() => {
     setIsToggleOpen(
-      typeof window !== "undefined" ? window.innerWidth < 992 : false
+      typeof window !== "undefined" ? window.innerWidth < 992 : false,
     );
   }, []);
   const {
@@ -154,7 +154,7 @@ const Header = () => {
                   <span className="absolute left-5 -top-2 inline-flex items-center justify-center gap-1 rounded-full bg-emerald-500 px-1.5 text-sm text-white">
                     {products_in_cart.reduce(
                       (a: any, s: any) => a + (!!s.quantity ? s.quantity : 1),
-                      0
+                      0,
                     )}
                     <span className="sr-only"> new emails</span>
                   </span>

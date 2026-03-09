@@ -23,6 +23,7 @@ export default function Products() {
     state: { products_in_cart, allproducts },
     dispatch,
   } = useSharedContext();
+
   useEffect(() => {
     let { id } = params;
     let arr = products_in_cart.filter((f: any) => f.id === id);
@@ -49,7 +50,7 @@ export default function Products() {
         JSON.stringify([
           ...arr,
           { ...product[0], quantity: product[0].quantity + 1 },
-        ])
+        ]),
       );
       setData((o) => ({ ...o, quantity: o.quantity + 1 }));
     } else {
@@ -72,7 +73,7 @@ export default function Products() {
               ...product,
               quantity: !!product.quantity ? product.quantity + 1 : 0 + 1,
             }
-          : product
+          : product,
       );
       dispatch({
         type: "UPDATE_CART",
@@ -122,7 +123,7 @@ export default function Products() {
               <div className="h-[460px] rounded-2xl bg-gray-300 dark:bg-gray-700 mb-4">
                 <img
                   className="w-full h-full object-cover rounded-2xl"
-                  src={data.photo}
+                  src={"/" + data.photo}
                   alt="Product Image"
                 />
               </div>

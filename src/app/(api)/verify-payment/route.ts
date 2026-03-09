@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       {
         headers: { "Content-Type": "application/json" },
         status: 201,
-      }
+      },
     );
   } catch (error) {
     console.log({ error });
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
           "Content-Type": "application/json",
         },
         status: 500,
-      }
+      },
     );
   }
 }

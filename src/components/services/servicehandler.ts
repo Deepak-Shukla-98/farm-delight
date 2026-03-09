@@ -28,6 +28,6 @@ export default async function ServiceHandler(response: any) {
         }
         toast.error(typeof error === "string" ? error : "Error");
         return null;
-      }
+      },
     );
 }

@@ -11,7 +11,7 @@ function Default() {
   const [isToggleOpen, setIsToggleOpen] = useState(false);
   useEffect(() => {
     setIsToggleOpen(
-      typeof window !== "undefined" ? window.innerWidth < 992 : false
+      typeof window !== "undefined" ? window.innerWidth < 992 : false,
     );
   }, []);
   useEffect(() => {

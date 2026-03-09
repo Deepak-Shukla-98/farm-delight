@@ -209,7 +209,7 @@ export async function DELETE(request: NextRequest) {
       {
         headers: { "Content-Type": "application/json" },
         status: 200,
-      }
+      },
     );
   } catch (error) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {

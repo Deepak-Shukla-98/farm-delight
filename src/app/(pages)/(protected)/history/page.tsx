@@ -93,7 +93,7 @@ function Page() {
                               <p className="font-medium text-sm leading-7 text-black">
                                 Status
                               </p>
-                              <p className="font-medium text-sm leading-6 whitespace-nowrap py-0.5 px-3 rounded-full lg:mt-3 bg-emerald-50 text-emerald-600">
+                              <p className="font-medium text-sm leading-6 whitespace-nowrap py-0.5 rounded-full lg:mt-3 bg-emerald-50 text-emerald-600">
                                 {d.status}
                               </p>
                             </div>
@@ -104,7 +104,9 @@ function Page() {
                                 Expected Delivery Time
                               </p>
                               <p className="font-medium text-base whitespace-nowrap leading-7 lg:mt-3 text-emerald-500">
-                                {moment(d?.shipping?.etd).format("LL")}
+                                {d?.shipping?.etd
+                                  ? moment(d?.shipping?.etd).format("LL")
+                                  : "-"}
                               </p>
                             </div>
                           </div>

@@ -49,7 +49,7 @@ export default function Shop() {
         JSON.stringify([
           ...arr,
           { ...product[0], quantity: product[0].quantity + 1 },
-        ])
+        ]),
       );
     } else {
       dispatch({
@@ -97,8 +97,8 @@ export default function Shop() {
                   d.status
                     ? handleDispatch(d)
                     : toast("Out of Stock", {
-                      icon: "😔",
-                    })
+                        icon: "😔",
+                      })
                 }
               >
                 <svg

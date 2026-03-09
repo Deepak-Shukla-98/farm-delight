@@ -110,7 +110,9 @@ function Page() {
                             Expected Delivery Time
                           </p>
                           <p className="font-medium text-base whitespace-nowrap leading-7 lg:mt-3 text-emerald-500">
-                            {moment(orders?.shipping?.etd).format("LL")}
+                            {orders?.shipping?.etd
+                              ? moment(orders?.shipping?.etd).format("LL")
+                              : "-"}
                           </p>
                         </div>
                       </div>

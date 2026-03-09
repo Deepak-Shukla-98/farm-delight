@@ -69,7 +69,7 @@ function Cart() {
             ...product,
             quantity: !!product.quantity ? product.quantity + 1 : 0 + 1,
           }
-        : product
+        : product,
     );
     dispatch({
       type: "UPDATE_CART",
@@ -116,7 +116,7 @@ function Cart() {
         JSON.stringify([
           ...arr,
           { ...product[0], quantity: product[0].quantity + 1 },
-        ])
+        ]),
       );
     } else {
       dispatch({
@@ -131,7 +131,7 @@ function Cart() {
   };
   let sum = products_in_cart.reduce(
     (a: any, s: any) => a + s.price * s.quantity,
-    0
+    0,
   );
   let discount =
     products_in_cart.reduce((a: any, s: any) => a + s.quantity, 0) * 0;

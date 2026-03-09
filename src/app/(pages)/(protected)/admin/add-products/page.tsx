@@ -63,7 +63,7 @@ const Page = () => {
 
   const handleSubmit = async (
     values: IFormInputs,
-    { setSubmitting }: FormikHelpers<IFormInputs>
+    { setSubmitting }: FormikHelpers<IFormInputs>,
   ) => {
     const formData = new FormData();
     formData.append("name", values.name);
@@ -119,7 +119,7 @@ const Page = () => {
                                 if (event.currentTarget.files) {
                                   setFieldValue(
                                     "photo",
-                                    event.currentTarget.files[0]
+                                    event.currentTarget.files[0],
                                   );
                                 }
                               }}

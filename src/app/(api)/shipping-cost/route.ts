@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     let data = await shippingRateCalculation(
       pickup_postcode,
       Number(pincode),
-      Number(weight)
+      Number(weight),
     );
     if (!data) {
       return new Response(
@@ -40,11 +40,11 @@ export async function GET(request: NextRequest) {
             "Content-type": "application/json",
           },
           status: 200, // Unauthorized
-        }
+        },
       );
     }
     let [cheapest, ...rest] = data.available_courier_companies.sort(
-      (a: any, b: any) => a.freight_charge - b.freight_charge
+      (a: any, b: any) => a.freight_charge - b.freight_charge,
     );
     let {
       estimated_delivery_days,
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
 async function shippingRateCalculation(
   pickup_postcode: Number,
   delivery_postcode: Number,
-  weight: Number
+  weight: Number,
 ) {
   try {
     let token = await getShiprocketToken();
@@ -117,7 +117,7 @@ async function getShiprocketToken() {
     {
       email: process.env.SHIPROCKET_USER,
       password: process.env.SHIPROCKET_PASSWORD,
-    }
+    },
   );
   return response.data.token;
 }

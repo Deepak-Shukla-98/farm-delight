@@ -18,7 +18,7 @@ function Page() {
   }, []);
   const total = orders.orderItems.reduce(
     (a: any, s: any) => a + s?.price * s.quantity,
-    0
+    0,
   );
   const handleCancel = async () => {
     let { orderItems, ...rest } = orders;

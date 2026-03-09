@@ -18,7 +18,7 @@ export const getProducts = async (payload: {}) => {
         Authorization: localStorage.getItem("token"),
       },
       params: payload,
-    })
+    }),
   );
 };
 export const postProducts = async (payload: any) => {
@@ -28,7 +28,7 @@ export const postProducts = async (payload: any) => {
         Authorization: localStorage.getItem("token"),
         "Content-Type": "multipart/form-data",
       },
-    })
+    }),
   );
 };
 export const updateProducts = async (payload: any) => {
@@ -37,7 +37,7 @@ export const updateProducts = async (payload: any) => {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-    })
+    }),
   );
 };
 export const deleteProduct = async (payload: any) => {
@@ -47,7 +47,7 @@ export const deleteProduct = async (payload: any) => {
         Authorization: localStorage.getItem("token"),
       },
       params: { id: payload.id },
-    })
+    }),
   );
 };
 export const placeOrders = async (payload: any) => {
@@ -56,7 +56,7 @@ export const placeOrders = async (payload: any) => {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-    })
+    }),
   );
 };
 export const verifyPayment = async (payload: any) => {
@@ -66,7 +66,7 @@ export const verifyPayment = async (payload: any) => {
         "Content-Type": "application/json",
         Authorization: localStorage.getItem("token"),
       },
-    })
+    }),
   );
 };
 export const getOrderHistory = async (payload: any) => {
@@ -75,7 +75,7 @@ export const getOrderHistory = async (payload: any) => {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-    })
+    }),
   );
 };
 export const getOrdersById = async (payload: any) => {
@@ -85,7 +85,7 @@ export const getOrdersById = async (payload: any) => {
         Authorization: localStorage.getItem("token"),
       },
       params: payload,
-    })
+    }),
   );
 };
 export const getAdminOrders = async (payload: any) => {
@@ -94,7 +94,7 @@ export const getAdminOrders = async (payload: any) => {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-    })
+    }),
   );
 };
 export const updateAdminOrders = async (payload: any) => {
@@ -103,7 +103,7 @@ export const updateAdminOrders = async (payload: any) => {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-    })
+    }),
   );
 };
 export const deleteAdminOrders = async (payload: any) => {
@@ -113,7 +113,7 @@ export const deleteAdminOrders = async (payload: any) => {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-    })
+    }),
   );
 };
 export const contactMail = async (payload: any) => {
@@ -123,7 +123,7 @@ export const contactMail = async (payload: any) => {
         Authorization: localStorage.getItem("token"),
         "Content-Type": "multipart/form-data",
       },
-    })
+    }),
   );
 };
 export const getUserdetails = async (payload: any) => {
@@ -132,7 +132,7 @@ export const getUserdetails = async (payload: any) => {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-    })
+    }),
   );
 };
 export const getShippingCost = async (payload: any) => {
@@ -142,6 +142,6 @@ export const getShippingCost = async (payload: any) => {
         Authorization: localStorage.getItem("token"),
       },
       params: payload,
-    })
+    }),
   );
 };
